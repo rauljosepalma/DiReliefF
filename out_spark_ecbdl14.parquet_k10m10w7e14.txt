@@ -1,0 +1,151 @@
+16/07/03 19:11:31 INFO spark.SparkContext: Running Spark version 1.6.1
+16/07/03 19:11:32 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+16/07/03 19:11:33 INFO spark.SecurityManager: Changing view acls to: root
+16/07/03 19:11:33 INFO spark.SecurityManager: Changing modify acls to: root
+16/07/03 19:11:33 INFO spark.SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: Set(root); users with modify permissions: Set(root)
+16/07/03 19:11:34 INFO util.Utils: Successfully started service 'sparkDriver' on port 43098.
+16/07/03 19:11:35 INFO slf4j.Slf4jLogger: Slf4jLogger started
+16/07/03 19:11:35 INFO Remoting: Starting remoting
+16/07/03 19:11:35 INFO Remoting: Remoting started; listening on addresses :[akka.tcp://sparkDriverActorSystem@192.168.122.2:42551]
+16/07/03 19:11:35 INFO util.Utils: Successfully started service 'sparkDriverActorSystem' on port 42551.
+16/07/03 19:11:35 INFO spark.SparkEnv: Registering MapOutputTracker
+16/07/03 19:11:35 INFO spark.SparkEnv: Registering BlockManagerMaster
+16/07/03 19:11:35 INFO storage.DiskBlockManager: Created local directory at /tmp/blockmgr-feee5ab5-8c71-41b7-8fbd-19be8087a50e
+16/07/03 19:11:35 INFO storage.MemoryStore: MemoryStore started with capacity 511.5 MB
+16/07/03 19:11:36 INFO spark.SparkEnv: Registering OutputCommitCoordinator
+16/07/03 19:11:36 INFO server.Server: jetty-8.y.z-SNAPSHOT
+16/07/03 19:11:36 INFO server.AbstractConnector: Started SelectChannelConnector@0.0.0.0:4040
+16/07/03 19:11:36 INFO util.Utils: Successfully started service 'SparkUI' on port 4040.
+16/07/03 19:11:36 INFO ui.SparkUI: Started SparkUI at http://192.168.122.2:4040
+16/07/03 19:11:36 INFO spark.HttpFileServer: HTTP File server directory is /tmp/spark-5dbedbe5-1b21-43d4-bbd4-be3673ddd509/httpd-e3f93e69-504a-4566-a3dc-cd269e5365f4
+16/07/03 19:11:36 INFO spark.HttpServer: Starting HTTP Server
+16/07/03 19:11:36 INFO server.Server: jetty-8.y.z-SNAPSHOT
+16/07/03 19:11:36 INFO server.AbstractConnector: Started SocketConnector@0.0.0.0:33236
+16/07/03 19:11:36 INFO util.Utils: Successfully started service 'HTTP file server' on port 33236.
+16/07/03 19:11:36 INFO spark.SparkContext: Added JAR file:/root/spark-fs-0.1.0-relieff.jar at http://192.168.122.2:33236/jars/spark-fs-0.1.0-relieff.jar with timestamp 1467565896739
+16/07/03 19:11:37 INFO client.AppClient$ClientEndpoint: Connecting to master spark://192.168.122.2:7077...
+16/07/03 19:11:37 INFO cluster.SparkDeploySchedulerBackend: Connected to Spark cluster with app ID app-20160703191137-0005
+16/07/03 19:11:37 INFO client.AppClient$ClientEndpoint: Executor added: app-20160703191137-0005/0 on worker-20160703102633-192.168.122.105-36986 (192.168.122.105:36986) with 2 cores
+16/07/03 19:11:37 INFO cluster.SparkDeploySchedulerBackend: Granted executor ID app-20160703191137-0005/0 on hostPort 192.168.122.105:36986 with 2 cores, 1024.0 MB RAM
+16/07/03 19:11:37 INFO client.AppClient$ClientEndpoint: Executor added: app-20160703191137-0005/1 on worker-20160703102633-192.168.122.104-35468 (192.168.122.104:35468) with 2 cores
+16/07/03 19:11:37 INFO cluster.SparkDeploySchedulerBackend: Granted executor ID app-20160703191137-0005/1 on hostPort 192.168.122.104:35468 with 2 cores, 1024.0 MB RAM
+16/07/03 19:11:37 INFO client.AppClient$ClientEndpoint: Executor added: app-20160703191137-0005/2 on worker-20160703102633-192.168.122.101-34781 (192.168.122.101:34781) with 2 cores
+16/07/03 19:11:37 INFO cluster.SparkDeploySchedulerBackend: Granted executor ID app-20160703191137-0005/2 on hostPort 192.168.122.101:34781 with 2 cores, 1024.0 MB RAM
+16/07/03 19:11:37 INFO client.AppClient$ClientEndpoint: Executor added: app-20160703191137-0005/3 on worker-20160703102633-192.168.122.106-36157 (192.168.122.106:36157) with 2 cores
+16/07/03 19:11:37 INFO cluster.SparkDeploySchedulerBackend: Granted executor ID app-20160703191137-0005/3 on hostPort 192.168.122.106:36157 with 2 cores, 1024.0 MB RAM
+16/07/03 19:11:37 INFO client.AppClient$ClientEndpoint: Executor added: app-20160703191137-0005/4 on worker-20160703102633-192.168.122.102-42290 (192.168.122.102:42290) with 2 cores
+16/07/03 19:11:37 INFO cluster.SparkDeploySchedulerBackend: Granted executor ID app-20160703191137-0005/4 on hostPort 192.168.122.102:42290 with 2 cores, 1024.0 MB RAM
+16/07/03 19:11:37 INFO client.AppClient$ClientEndpoint: Executor added: app-20160703191137-0005/5 on worker-20160703102642-192.168.122.107-45825 (192.168.122.107:45825) with 2 cores
+16/07/03 19:11:37 INFO cluster.SparkDeploySchedulerBackend: Granted executor ID app-20160703191137-0005/5 on hostPort 192.168.122.107:45825 with 2 cores, 1024.0 MB RAM
+16/07/03 19:11:37 INFO client.AppClient$ClientEndpoint: Executor added: app-20160703191137-0005/6 on worker-20160703102633-192.168.122.103-32828 (192.168.122.103:32828) with 2 cores
+16/07/03 19:11:37 INFO cluster.SparkDeploySchedulerBackend: Granted executor ID app-20160703191137-0005/6 on hostPort 192.168.122.103:32828 with 2 cores, 1024.0 MB RAM
+16/07/03 19:11:37 INFO util.Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 40335.
+16/07/03 19:11:37 INFO netty.NettyBlockTransferService: Server created on 40335
+16/07/03 19:11:37 INFO storage.BlockManagerMaster: Trying to register BlockManager
+16/07/03 19:11:37 INFO storage.BlockManagerMasterEndpoint: Registering block manager 192.168.122.2:40335 with 511.5 MB RAM, BlockManagerId(driver, 192.168.122.2, 40335)
+16/07/03 19:11:37 INFO storage.BlockManagerMaster: Registered BlockManager
+16/07/03 19:11:37 INFO client.AppClient$ClientEndpoint: Executor updated: app-20160703191137-0005/1 is now RUNNING
+16/07/03 19:11:37 INFO client.AppClient$ClientEndpoint: Executor updated: app-20160703191137-0005/0 is now RUNNING
+16/07/03 19:11:37 INFO client.AppClient$ClientEndpoint: Executor updated: app-20160703191137-0005/3 is now RUNNING
+16/07/03 19:11:37 INFO client.AppClient$ClientEndpoint: Executor updated: app-20160703191137-0005/4 is now RUNNING
+16/07/03 19:11:37 INFO client.AppClient$ClientEndpoint: Executor updated: app-20160703191137-0005/6 is now RUNNING
+16/07/03 19:11:37 INFO client.AppClient$ClientEndpoint: Executor updated: app-20160703191137-0005/2 is now RUNNING
+16/07/03 19:11:37 INFO client.AppClient$ClientEndpoint: Executor updated: app-20160703191137-0005/5 is now RUNNING
+16/07/03 19:11:40 INFO scheduler.EventLoggingListener: Logging events to hdfs://master.cluster:8020/spark-event-log/app-20160703191137-0005
+16/07/03 19:11:40 INFO cluster.SparkDeploySchedulerBackend: SchedulerBackend is ready for scheduling beginning after reached minRegisteredResourcesRatio: 0.0
+16/07/03 23:57:45 ERROR cluster.SparkDeploySchedulerBackend: Application has been killed. Reason: Master removed our application: KILLED
+Exception in thread "main" org.apache.spark.SparkException: Job aborted due to stage failure: Master removed our application: KILLED
+	at org.apache.spark.scheduler.DAGScheduler.org$apache$spark$scheduler$DAGScheduler$$failJobAndIndependentStages(DAGScheduler.scala:1431)
+	at org.apache.spark.scheduler.DAGScheduler$$anonfun$abortStage$1.apply(DAGScheduler.scala:1419)
+	at org.apache.spark.scheduler.DAGScheduler$$anonfun$abortStage$1.apply(DAGScheduler.scala:1418)
+	at scala.collection.mutable.ResizableArray$class.foreach(ResizableArray.scala:59)
+	at scala.collection.mutable.ArrayBuffer.foreach(ArrayBuffer.scala:47)
+	at org.apache.spark.scheduler.DAGScheduler.abortStage(DAGScheduler.scala:1418)
+	at org.apache.spark.scheduler.DAGScheduler$$anonfun$handleTaskSetFailed$1.apply(DAGScheduler.scala:799)
+	at org.apache.spark.scheduler.DAGScheduler$$anonfun$handleTaskSetFailed$1.apply(DAGScheduler.scala:799)
+	at scala.Option.foreach(Option.scala:236)
+	at org.apache.spark.scheduler.DAGScheduler.handleTaskSetFailed(DAGScheduler.scala:799)
+	at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.doOnReceive(DAGScheduler.scala:1640)
+	at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:1599)
+	at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:1588)
+	at org.apache.spark.util.EventLoop$$anon$1.run(EventLoop.scala:48)
+	at org.apache.spark.scheduler.DAGScheduler.runJob(DAGScheduler.scala:620)
+	at org.apache.spark.SparkContext.runJob(SparkContext.scala:1832)
+	at org.apache.spark.SparkContext.runJob(SparkContext.scala:1952)
+	at org.apache.spark.rdd.RDD$$anonfun$reduce$1.apply(RDD.scala:1025)
+	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:150)
+	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:111)
+	at org.apache.spark.rdd.RDD.withScope(RDD.scala:316)
+	at org.apache.spark.rdd.RDD.reduce(RDD.scala:1007)
+	at org.apache.spark.rdd.RDD$$anonfun$takeOrdered$1.apply(RDD.scala:1397)
+	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:150)
+	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:111)
+	at org.apache.spark.rdd.RDD.withScope(RDD.scala:316)
+	at org.apache.spark.rdd.RDD.takeOrdered(RDD.scala:1384)
+	at sparkfs.ReliefFRanker$$anonfun$15$$anonfun$apply$3.apply(ReliefF.scala:183)
+	at sparkfs.ReliefFRanker$$anonfun$15$$anonfun$apply$3.apply(ReliefF.scala:175)
+	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:244)
+	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:244)
+	at scala.collection.IndexedSeqOptimized$class.foreach(IndexedSeqOptimized.scala:33)
+	at scala.collection.mutable.ArrayOps$ofInt.foreach(ArrayOps.scala:156)
+	at scala.collection.TraversableLike$class.map(TraversableLike.scala:244)
+	at scala.collection.mutable.ArrayOps$ofInt.map(ArrayOps.scala:156)
+	at sparkfs.ReliefFRanker$$anonfun$15.apply(ReliefF.scala:175)
+	at sparkfs.ReliefFRanker$$anonfun$15.apply(ReliefF.scala:174)
+	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:244)
+	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike.scala:244)
+	at scala.collection.immutable.Range.foreach(Range.scala:141)
+	at scala.collection.TraversableLike$class.map(TraversableLike.scala:244)
+	at scala.collection.AbstractTraversable.map(Traversable.scala:105)
+	at sparkfs.ReliefFRanker.fit(ReliefF.scala:174)
+	at sparkfs.Main$.main(Main.scala:507)
+	at sparkfs.Main.main(Main.scala)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.apache.spark.deploy.SparkSubmit$.org$apache$spark$deploy$SparkSubmit$$runMain(SparkSubmit.scala:731)
+	at org.apache.spark.deploy.SparkSubmit$.doRunMain$1(SparkSubmit.scala:181)
+	at org.apache.spark.deploy.SparkSubmit$.submit(SparkSubmit.scala:206)
+	at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:121)
+	at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
+16/07/03 23:57:45 WARN scheduler.TaskSetManager: Lost task 332.0 in stage 13.0 (TID 7016, slave05.cluster): TaskKilled (killed intentionally)
+16/07/03 23:57:45 WARN scheduler.TaskSetManager: Lost task 372.0 in stage 13.0 (TID 7024, slave04.cluster): TaskKilled (killed intentionally)
+16/07/03 23:57:45 WARN scheduler.TaskSetManager: Lost task 351.0 in stage 13.0 (TID 7025, slave06.cluster): TaskKilled (killed intentionally)
+16/07/03 23:57:45 WARN scheduler.TaskSetManager: Lost task 349.0 in stage 13.0 (TID 7023, slave06.cluster): TaskKilled (killed intentionally)
+16/07/03 23:57:45 WARN scheduler.TaskSetManager: Lost task 341.0 in stage 13.0 (TID 7020, slave05.cluster): TaskKilled (killed intentionally)
+16/07/03 23:57:45 WARN scheduler.TaskSetManager: Lost task 382.0 in stage 13.0 (TID 7027, slave04.cluster): TaskKilled (killed intentionally)
+16/07/03 23:57:45 WARN scheduler.TaskSetManager: Lost task 499.0 in stage 13.0 (TID 7026, slave07.cluster): TaskKilled (killed intentionally)
+16/07/03 23:57:45 WARN scheduler.TaskSetManager: Lost task 506.0 in stage 13.0 (TID 7028, slave07.cluster): TaskKilled (killed intentionally)
+16/07/03 23:57:45 WARN scheduler.TaskSetManager: Lost task 330.0 in stage 13.0 (TID 7011, slave01.cluster): TaskKilled (killed intentionally)
+16/07/03 23:57:45 WARN scheduler.TaskSetManager: Lost task 339.0 in stage 13.0 (TID 7015, slave03.cluster): TaskKilled (killed intentionally)
+16/07/03 23:57:45 WARN scheduler.TaskSetManager: Lost task 342.0 in stage 13.0 (TID 7017, slave03.cluster): TaskKilled (killed intentionally)
+16/07/03 23:57:45 WARN scheduler.TaskSetManager: Lost task 374.0 in stage 13.0 (TID 7018, slave02.cluster): TaskKilled (killed intentionally)
+16/07/03 23:57:45 WARN scheduler.TaskSetManager: Lost task 355.0 in stage 13.0 (TID 7014, slave02.cluster): TaskKilled (killed intentionally)
+16/07/03 23:57:45 WARN scheduler.TaskSetManager: Lost task 340.0 in stage 13.0 (TID 7012, slave01.cluster): TaskKilled (killed intentionally)
+16/07/03 23:57:45 ERROR util.Utils: Uncaught exception in thread dispatcher-event-loop-1
+java.io.IOException: Filesystem closed
+	at org.apache.hadoop.hdfs.DFSClient.checkOpen(DFSClient.java:795)
+	at org.apache.hadoop.hdfs.DFSClient.getFileInfo(DFSClient.java:1986)
+	at org.apache.hadoop.hdfs.DistributedFileSystem$18.doCall(DistributedFileSystem.java:1118)
+	at org.apache.hadoop.hdfs.DistributedFileSystem$18.doCall(DistributedFileSystem.java:1114)
+	at org.apache.hadoop.fs.FileSystemLinkResolver.resolve(FileSystemLinkResolver.java:81)
+	at org.apache.hadoop.hdfs.DistributedFileSystem.getFileStatus(DistributedFileSystem.java:1114)
+	at org.apache.hadoop.fs.FileSystem.exists(FileSystem.java:1400)
+	at org.apache.spark.scheduler.EventLoggingListener.stop(EventLoggingListener.scala:218)
+	at org.apache.spark.SparkContext$$anonfun$stop$8$$anonfun$apply$mcV$sp$5.apply(SparkContext.scala:1736)
+	at org.apache.spark.SparkContext$$anonfun$stop$8$$anonfun$apply$mcV$sp$5.apply(SparkContext.scala:1736)
+	at scala.Option.foreach(Option.scala:236)
+	at org.apache.spark.SparkContext$$anonfun$stop$8.apply$mcV$sp(SparkContext.scala:1736)
+	at org.apache.spark.util.Utils$.tryLogNonFatalError(Utils.scala:1229)
+	at org.apache.spark.SparkContext.stop(SparkContext.scala:1735)
+	at org.apache.spark.scheduler.cluster.SparkDeploySchedulerBackend.dead(SparkDeploySchedulerBackend.scala:127)
+	at org.apache.spark.deploy.client.AppClient$ClientEndpoint.markDead(AppClient.scala:264)
+	at org.apache.spark.deploy.client.AppClient$ClientEndpoint$$anonfun$receive$1.applyOrElse(AppClient.scala:172)
+	at org.apache.spark.rpc.netty.Inbox$$anonfun$process$1.apply$mcV$sp(Inbox.scala:116)
+	at org.apache.spark.rpc.netty.Inbox.safelyCall(Inbox.scala:204)
+	at org.apache.spark.rpc.netty.Inbox.process(Inbox.scala:100)
+	at org.apache.spark.rpc.netty.Dispatcher$MessageLoop.run(Dispatcher.scala:215)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:745)
