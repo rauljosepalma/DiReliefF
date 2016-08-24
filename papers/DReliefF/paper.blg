@@ -1,0 +1,63 @@
+This is BibTeX, Version 0.99d (TeX Live 2015/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: paper.aux
+The style file: spmpsci.bst
+Database file #1: library.bib
+Warning--entry type for "hadoop" isn't style-file defined
+--line 1627 of file library.bib
+Repeated entry---line 4548 of file library.bib
+ : @inbook{Li2016
+ :               ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4785 of file library.bib
+ : @article{Bolón-Canedo2012
+ :                           ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4833 of file library.bib
+ : @article{Bolón-Canedo2012
+ :                           ,
+I'm skipping whatever remains of this entry
+Warning--missing publisher in Kubica2011
+Warning--empty journal in Li2016
+You've used 32 entries,
+            2946 wiz_defined-function locations,
+            880 strings with 13150 characters,
+and the built_in function-call counts, 28571 in all, are:
+= -- 3426
+> -- 674
+< -- 8
++ -- 408
+- -- 244
+* -- 1381
+:= -- 2830
+add.period$ -- 82
+call.type$ -- 32
+change.case$ -- 224
+chr.to.int$ -- 0
+cite$ -- 34
+duplicate$ -- 3129
+empty$ -- 1683
+format.name$ -- 273
+if$ -- 5883
+int.to.chr$ -- 0
+int.to.str$ -- 32
+missing$ -- 367
+newline$ -- 184
+num.names$ -- 64
+pop$ -- 1056
+preamble$ -- 1
+purify$ -- 186
+quote$ -- 0
+skip$ -- 1636
+stack$ -- 0
+substring$ -- 1289
+swap$ -- 2699
+text.length$ -- 8
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 128
+warning$ -- 2
+while$ -- 150
+width$ -- 34
+write$ -- 424
+(There were 3 error messages)

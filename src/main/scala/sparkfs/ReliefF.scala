@@ -378,7 +378,7 @@ final class ReliefFFSSelector(
     )
 
     // DEBUG
-    // This should be zero when ContextMerti is enabled.
+    // This should be zero when ContextMerit is enabled.
     val totalHitsContributions: Double = 
       (0 until numOfFeats).map { f => 
         (0 until samples.size).map { i =>

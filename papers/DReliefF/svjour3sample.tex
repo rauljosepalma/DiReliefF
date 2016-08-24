@@ -1,0 +1,501 @@
+%%%%%%%%%%%%%%%%%%%%%%% file template.tex %%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This is a template file for the LaTeX package SVJour3 for
+% standardised Springer journals in twocolumn format.
+%
+%                                               Springer 2006/03/15
+%
+% Copy it to a new file with a new name and use it as the basis
+% for your article. Delete % as needed.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\documentclass[onecolumn]{svjour3}         % onecolumn (standard format)
+%\documentclass[smallextended]{svjour3}     % onecolumn (second format)
+\documentclass[twocolumn]{svjour3}          % twocolumn
+%
+\usepackage{graphicx}
+\advance\paperheight by-20mm
+\usepackage[cam,cross,horigin=-27.9mm,vorigin=-13.5mm]{crop}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amssymb}
+%
+%\newcommand{\envelope}{(corresponding author)}
+% if you have access to the marvosym font use its envelope symbol
+\usepackage{marvosym}
+\newcommand{\envelope}{(\raisebox{-.5pt}{\scalebox{1.45}{\Letter}}\kern-1.7pt)}
+%
+%\usepackage{mathptmx}
+\usepackage{times}
+\usepackage[LY1]{fontenc}
+% \usepackage[LY1,mtbold]{mathtime}
+% \usepackage{biograph}
+%
+\input{glov3.doi}
+\let\SprJLogo=\relax
+\DOIyear{2002}
+\OFyear{2003}
+\DOImsnr{6789}
+\journalnumber{0815}
+\journalname{Standard J.}
+\idline{12: 345--678}{345}
+\papertype{generic article}
+%\idline{}{0}
+%
+\usepackage{biograph}        % to allow for author biography at the end
+%
+% insert here the call for the packages your document requires
+%\usepackage{latexsym}
+% etc.
+%
+% please place your own definitions here and don't use \def but
+% \newcommand{}{}
+%
+\smartqed
+% some private author definitions
+\newcommand{\MSUN}{{\mathrm{MSUN}}}
+\newcommand{\R}{{\mathbb{R}}}
+\newcommand{\del}{\setminus}
+
+\begin{document}
+
+\title{Sample of the standard layout for journal
+articles\thanks{Grants,
+communicated-by lines, or other notes about the
+article will be placed here between rules. Such notes
+are optional.}}
+
+\subtitle{A subtitle is optional. If there is one, write it here}
+
+%\dedication{Dedicated to Professor Josef Stoer on the occasion of
+%his
+%60th birthday}
+
+\titlerunning{This is the title of the article}
+
+\author{First Author \and
+%\hbox to 7.5cm{|\hrulefill\ filler \hrulefill|} \and Mechthild Stoer \and
+       Second Author \and Third Author}
+%\authorrunning{M. Stoer and
+%       G. Dahl}
+
+
+\date{Received: 1 December 2003 / Accepted:
+12 February 2004 / Published online: 15 March 2004}
+
+\institute{F. Author \and T. Author \at Konrad-Zuse-Zentrum f\"ur
+Informationstechnik Berlin, Heilbronner Strasse 10, 10711 Berlin,
+Germany\\\email{fauthor@zib-berlin.de} \and S. Author \envelope \at
+Norwegian Telecom Research, P.O. Box 83, 2007 Kjeller, Norway\\
+Tel.: +123-45-678910\columncase{,}{\\}
+Fax: +123-45-678910\columncase{,}{\\}
+\email{geir.dahl@tf.tele.no}}
+
+\maketitle
+
+\begin{abstract}
+An abstract is required for regular articles. It is optional for
+other types of articles, e.g., for an editorial. It is always
+called ``Abstract'' in English, ``Zusammenfassung'' in German, and
+``R\'esum\'e'' in French. Keywords and Mathematics subject
+classification and PAC numbers are optional. Which ones are
+included for a particular article is defined per journal. Lists of
+nomenclature, symbols, or abbreviations are optional and only
+included in some journals. Note that although all of these options
+are possible, it is recommended that each journal doesn't have too
+many of them. \keywords{First keyword \and Second keyword\and
+More} \subclass{65K05\and 90C35}
+%\ESM{Supplementary
+%material is available in the online version of this article
+%at \columncase{}{\\}http://dx.doi.org/10.1007/s00412-003-0244-6}
+\end{abstract}
+
+\section{Introduction}
+\label{se:intro}
+
+
+It is common to name the first section of an article
+``Introduction''. This is, however, always optional. Headings of
+the first three section levels are numbered. This introduction is an example of a
+first-level heading.
+
+The rest of this section is filler text to make the introduction a
+little longer. More specifically, we have given a set $V$ of nodes
+and traffic demands between certain pairs of these nodes. Each
+demand represents a certain amount of point-to-point traffic to be
+routed in the network between origin and destination nodes. In
+addition, a set of edges joining pairs of nodes in~$V$ are given;
+these represent direct physical links (for example, a fiber cable
+or a radio relay system). For each edge one wants to decide which
+capacity to install, chosen among a discrete set of alternatives,
+each with an associated building cost. The number of such
+alternatives depends on the application and the desired level of
+detail. We are interested in capacity extensions such that all
+demands can be routed simultaneously in the resulting network.
+Such a routing is called a multicommodity flow. Especially, we may
+require that the network allows a multicommodity flow also in
+certain failure situations, for example, when a single edge or
+node fails. In our model, we allow traffic demands to be split up
+and routed on several paths, that is, we consider continuous
+flows. The discreteness of the model lies in deciding the
+design/capacity extension. The optimization problem in MULTISUN is
+to find such a feasible network extension of minimum total
+building cost.
+
+The purpose of this paper is to present and analyze an integer linear
+programming model for the MULTISUN problem using a polyhedral
+approach. We study properties of polytopes that are naturally
+associated with the model. Specifically, we present classes of
+nonredundant inequalities that strengthen the original formulation and
+may be (in fact, are) used in a cutting plane algorithm for solving
+real-world planning problems. In deriving these inequalities, we
+exploit relations to the knapsack problem and also the design of
+(uncapacitated) networks with connectivity constraints.
+
+\subsection{Second-level heading}
+\label{level2} This is an example of a second-level heading. The
+rest of the paragraph is filler text. For obtaining heat flux from
+the temperature time history data of the thin film gauge, we need
+the values of $E_{f}$, $\alpha$, and $\beta$. The initial voltage
+calculated across each gauge, $E_f$, is  based on the initial
+resistance of the gauge and the constant current fed to it;
+$\beta$, the gauge backing material property, which is equal to
+$(k \rho c_p)^{1/2}$ can be obtained by knowing the thermal
+conductivity, mass density, and specific heat (at constant
+pressure) of the backing material. The value of $\beta$ thus
+obtained is 1882 J$\,$m$^{-2}$$\,$K$^{-1}$$\,$s$^{-1/2}$;
+$\alpha$, the temperature coefficient of resistance of the
+platinum thin film gauge is obtained from a calibration experiment
+and is equal to 0.00215\,K$^{-1}$ .
+
+\subsubsection{Third-level heading}
+\label{level3} This is a third-level heading. If needed, subsequent displayed headings will be set like this one,
+but will be unnumbered.
+
+\paragraph{Paragraph heading}
+This is a sample paragraph heading. It is not usually numbered.
+%
+\section{Sample of mathematics}
+\label{se:basic_prop}
+
+In this section, we show the standard setting of mathematics with
+examples from various subject areas. In addition to what is shown
+here, special formatting set by the author will be retained.
+
+\subsection{Computer science}
+
+Let $S$, $S_1$, $S_2$, etc.\ denote superstep processes and let
+$\alpha(S)$, $\alpha_R(S)$, $\alpha_W(S)$ denote, respectively,
+the set of free variables, the set of free read-only variables and
+the set of free read--write variables in $S$; $x$, $y$, etc.\
+denote simple variables; and $\parallel^{ss}$ denotes the
+superstep composition operator. The superstep $S_1 \parallel^{ss}
+S_2$ is valid provided that its constituent processes are
+disjoint:
+\begin{align}
+\mathrm{disjoint}(S_1, S_2) \space &=_{\mathrm{df}} \space (\alpha_W(S_1)
+\cap \alpha(S_2) \nonumber\\
+&= \{\}) \wedge (\alpha_W(S_2) \cap \alpha(S_1) =
+\{\} )
+\end{align}
+
+
+\begin{eqnarray}
+{}^{p}\left(\bullet P\right)_{f} & = & \bullet \left(
+{}^{p}P_{f}\right) \nonumber \\
+{}^{p}\left(P \circ Q\right)_{f} & =
+& \left({}^{p}P_{f}\right) \circ \left({}^{p}Q_{f}\right) \nonumber \\
+{}^{p}\left(Ux.P\right)_{f} & = &Uk.\left( {}^{p \wedge z \neq k}\left(P^{x}_{k}\right)_{f}\right)
+\ \mbox{where $k$ is a fresh name}
+\nonumber \\
+{}^{p}\left(x R y\right)_{f} & = & \left({}^{p}x_{f}\right) R
+\left({}^{p}y_{f}\right) \nonumber \\
+{}^{p}y_{f} & = & \left\{ \begin{array}{ll}
+f\left(y\right) & \mbox{if $p\left(y\right) $} \nonumber \\
+y & \mbox{otherwise}
+\end{array} \right . \\[-4mm] \\
+\nonumber{}^{p}c_{f} & = & c
+\end{eqnarray}
+where $x$ and $y$ are arbitrary names, $c$ is a constant, $P$ and
+$Q$ are predicates, $\bullet$ is a monadic operator (such as the
+logical operator, $\neg$), $\circ$ is a dyadic operator (such as
+the logical operator, $\wedge$), $R$ is a relation (such as the
+arithmetic relation, $<$) and $U$
+is a universal quantifier (either $\forall$ or $\exists$).
+
+\subsection{Mathematics}
+
+For every $N\in {\bf N}$ there is ${\lambda}_N>1$ such that for
+every ${\lambda}\geq {\lambda}_N$ there exists $\mu_{\lambda}>0$
+such that for every $\mu\geq \mu_{\lambda}$ we have the following:
+\begin{enumerate}
+\item
+For all $m\in{\bf N},$ for all
+$\delta=(\delta_1,\dots,\delta_m)\in\{0,1\}^m$ and for all
+$(k_1,\dots,k_m)\in\{1,\dots,N\}$ such that
+$mn^*+k_1+\dots+k_m+\delta_1+\dots+\delta_m$ is even, there are
+two $m\pi$-periodic solutions which have exactly $n^*+k_j$ zeros
+in $((j-1)\pi,(j-1)\pi+\pi/2)$ and $\delta_j$ zeros in
+$((j-1)\pi+\pi/2,j\pi),$ for every $j=1,\dots,m$.
+\item
+For any pair of sequences
+$\delta=(\dots,\delta_{-1},\delta_0,\delta_1,\dots)\in\{0,1\}^{\bf
+Z}$ and $k=(\dots,k_{-1},\allowbreak k_0,k_1,\dots)\in\{1,\dots,N\}^{\bf
+Z}$ there are two bounded solutions  which have exactly $n^*+k_j$
+zeros in $((j-1)\pi,(j-1)\pi+\pi/2)$ and $\delta_j$ zeros in
+$((j-1)\pi+\pi/2,j\pi),$ for every $j\in{\bf Z}$.
+\end{enumerate}
+
+
+Moreover, suppose that there exist $N$ successive natural numbers
+$n_1,\ldots , n_N\in {{\bf N}}$ such that
+\begin{eqnarray} \label{gap}
+    \dfrac{\omega \sqrt{q^+g_0}}{\pi}\leq n_1<\ldots <n_N<
+      \dfrac{(b-a)\sqrt{m^+ g_\infty}}{\pi}-1
+\end{eqnarray}
+and let us also fix $\epsilon>0$ such that
+\begin{align} \label{ipoepsilon}
+    \dfrac{\omega \sqrt{q^+g_0}}{\pi}&\leq n_1<\ldots <n_N
+    \columncase{}{\nonumber\\&}
+    \leq \dfrac{(b-a)(1-\epsilon)\sqrt{m^+ g_\infty}}{\pi}-1.
+\end{align}
+Finally, let us assume that
+\begin{align} \label{ipoq1}
+\sqrt{m^-}&(d-c)  \columncase{>}{\nonumber\\>&}
+F \left(X_0 {\mathrm{e}}^{-L \omega },
+                 \sqrt{\dfrac{Hm^+}{\epsilon}}\max(1,1/\sqrt{m^+ g_\infty}) {\mathrm{e}}^{2L\omega }\right)
+\end{align}
+and
+\begin{align} \label{ipoq2}
+\sqrt{m^-}&(d-c)\columncase{>}{\nonumber\\>&}
+F\left(X_0 {\mathrm{e}}^{-2L\omega },
+                  \sqrt{\dfrac{Hm^+}{\epsilon}}\max(1,1/\sqrt{m^+ g_\infty}){\mathrm{e}}^{L\omega }\right),
+\end{align}
+where the function $F$ is defined and $L=\max(1,q^+M)$.
+
+\subsection{Physics}
+
+Considering the model shown above, with a transient
+rate of heat transfer into the body, a general expression for the heat transfer
+rate is as follows:
+\begin{equation}
+\dot{q}(t) = \frac{\beta}{\sqrt{\pi}}\left[ \frac{T(t)}{\sqrt{t}}
++ \frac{1}{2}\int_0^t\frac{T(t)-T(\tau)}{(t-\tau)^{3/2}}{\mathrm{d}}\tau
+\right]\; . \label{eqn:D}
+\end{equation}
+The time dependent relative temperature $T(t)$ in the above equation can be expressed in terms of relative voltage $E(t)$, which is directly proportional to $T(t)$, and the heat transfer rate can be expressed as below:
+\begin{equation}
+\dot{q}(t) = \frac{\beta}{\sqrt{\pi} \alpha E_f}\left[
+\frac{E(t)}{\sqrt{t}} +
+\frac{1}{2}\int_0^t\frac{E(t)-E(\tau)}{(t-\tau)^{3/2}}{\mathrm{d}}\tau
+\right] \label{eqn:E}
+\end{equation}
+where $E_f=r\cdot$I, which is a finite value, but is set as the zero level or base level for the measured voltage $E(t)$.
+For a given $E(\tau)$, values of this function can be determined at
+\[
+ \tau = t_i = i\Delta t;\quad i=0,1,2, \ldots ,n;\quad \textrm{where},\; \Delta t = t/n.
+\]
+Then $E(\tau)$ can be approximated by a piece-wise linear function of the form
+\begin{equation}
+E(\tau) = E(t_{i-1}) + \frac{E(t_i) - E(t_{i-1})} {\Delta t}(\tau - t_{i-1}),
+\label{eqn:F}
+\end{equation}
+where $t_{i-1} \le \tau \le t_i,\quad i=1,2,3, \ldots ,n$.
+
+
+\section{Special paragraph headings}
+
+Standard paragraph headings include theorems, propositions,
+lemmas, definitions, remarks, proofs and the like. Here we show a
+few examples. The text of theorems, propositions, and lemmas is
+set italic. That of definitions and proofs are set upright.
+Mathematics, numbers and symbols within these environments are set
+the same as they are in regular text.
+
+\begin{proposition}
+\label{pr:dimension} Let $\MSUN_S$ be one of the polytopes
+$\MSUN_\emptyset$, $\MSUN_E$ or finally $\MSUN_{E\cup V}$. Then
+\columncase{the polytope}{}
+$\MSUN_S(G,m,H,d)$ is full-dimensional if and only if
+$\MSUN_S(G-e,m,H,d)$ is non\-empty for all $e\in E$.
+\end{proposition}
+%
+\begin{proof}
+Assume that $\MSUN_S(G-e,m,H,d)$ is empty for some $e\in E$.
+Then either
+$\MSUN_S(G,m,H,d)$ is empty,
+or each feasible $x \in \R^I$ satisfies $x^1_e = 1$,
+hence $\MSUN_S$ is not full-dimensional.
+
+To prove the sufficiency, we assume that $\MSUN_S$ is not
+full-dimensional, i.e., there is a linear equation $a^{\rm T}x = \alpha$
+with nonzero~$a$ satisfied by each point in $\MSUN_S$.
+Let $f \in E$. By hypothesis, there exists a solution~$x\in \MSUN_S$
+with $x^t_f = 0$ for $t = 1, \ldots, T_{f}$.
+By monotonicity, the solutions~$x^k$
+obtained from~$x$ by changing $x^t_{f}$ to~1 for $t=1,\ldots,k$
+are feasible. Thus we have $a^{\rm T}x = a^{\rm T}x^1 = a^{\rm T}x^2 = \cdots = \alpha$,
+and by subtraction, we get $a^t_f = 0$ for all $t=1,\ldots,T_f$.
+Since $f$ was chosen arbitrarily in~$E$,
+we get $a = 0$, a contradiction. Thus the
+equality system of $\MSUN_S$ is empty, and the polyhedron is
+full-dimensional.
+\qed \end{proof}
+
+\begin{definition}
+A band $B$ in~$\hat{E}$ is called a {\it valid} $\cal P${-band} if
+for each nonempty $W\subset \hat{V}$ with connected shores (i.e.,
+$\hat{G}[W]$ and $\hat{G}[\hat{V} \del W]$ are connected) we have
+that
+%
+\begin{equation}
+\label{eq:valid_band_def}
+     m( \{\, (e,t) \in B^< \mid e \in \delta_{\hat{G}} (W)\,\} )
+\;<\; d(\delta_{\hat{H}} (W) ).
+\end{equation}
+%
+A valid $\cal P$-band~$B$ is called {\it maximal} if no valid
+$\cal P$-band above~$B$ exists.
+\end{definition}
+
+\section{Other elements of an article}
+
+\subsection{Figures and tables}
+
+Figures and tables must always have a legend. Indicators of figure
+parts are bold and lowercase. See the example in
+Fig.\,\ref{chue_dgc_fig5}. An example table is shown in
+Table\,\ref{tab:1}.
+
+%\begin{figure*}
+\begin{figure}
+%\centering
+\columncase{\includegraphics[width=.48\textwidth]{chuedf5a}\hfil}
+{\includegraphics*[width=\columnwidth]{chuedf5a}\\[8pt]}
+\columncase{\includegraphics[width=.48\textwidth]{chuedf5b}%
+\parfillskip=0pt\endgraf}
+{\includegraphics*[width=\columnwidth]{chuedf5b}}
+%
+\caption{Distribution of $\gamma$ (${\bf a}$) and molecular weight
+(${\bf b}$) along the nozzle centerline; Mach 10 condition}
+\label{chue_dgc_fig5}
+\end{figure}
+%\end{figure*}
+
+% Table 1
+\begin{table}
+\caption{Composition parameters for states 1, 2, and 3}
+\label{tab:1}       % Give a unique label
+\centering
+\begin{tabular}{@{}lllll@{}}
+\hline\noalign{\smallskip}
+$j$ & Species & $W_j$ & $\tilde n_{1,2j}$ & $\tilde n_{3j}$ \\[2pt]
+\tableheadseprule\noalign{\smallskip}
+1 & H$_{2} $ &  2.01588 & $2 \phi (1 - \delta)$      & 0 \\
+2 & CH$_{4}$ & 16.04246 & $ \phi\delta /2$           & 0 \\
+3 & O$_{2} $ & 31.9988  & 1                          & $1-\phi$ \\
+4 & N$_{2} $ & 28.01348 & 3.76                       & 3.76 \\
+5 & H$_{2} $O & 18.01528 & 0                          & $(2 -
+\delta)
+\phi$ \\
+6 & CO$_{2}$ & 44.0095  & 0                          & $\phi
+\delta /2$
+\\[1pt]\hline
+%\noalign{\smallskip}\hline
+\end{tabular}
+\end{table}
+
+\subsection{Lists}
+
+Lists can be numbered or unnumbered. When numbered, arabic
+numbers, lowercase roman numerals, or lowercase letters can be
+used. When unnumbered, hyphens are usually used to indicate the
+start of each list item.
+
+\begin{enumerate}
+\item Solve an initial LP containing a few valid inequalities
+for $\MSUN_S$, using the cost function~$c$;
+\item If the optimal solution $\bar{x}$ of the current LP
+is integral, output $\bar{x}$ as an optimal solution to Model~2;
+otherwise $\bar{x}$ is not feasible for $\MSUN_S$, so try to find
+strengthened band inequalities and other inequalities valid for
+$\MSUN_S$ that are violated by~$\bar{x}$;
+\item If violated inequalities were found,
+add them to the current LP, solve this new LP, and go to Step~2;
+otherwise stop and output $c^{\rm T}\bar{x}$
+as the best lower bound found for the problem.
+\end{enumerate}
+
+\subsection{References}
+
+A sample reference list is given at the end of this dummy article.
+Three different styles for which BibTeX styles are available are
+shown, using a journal and a book reference for each style. Reference
+citations in the text may use numbered \cite{ref1} or author-year (Liu
+2004) formats.
+
+\section{Conclusions}
+
+This layout is not meant to govern every last bit of content.
+Obviously where an author prepares the content in an organized and
+consistent manner, every effort will be made to stay true to this
+presentation insofar as the required parameters of the layout
+standards allow.
+
+In addition, the instructions to authors for a particular journal
+may specify additional requirements for journal style.
+
+\begin{acknowledgements}
+Acknowledgements are optional and should only be included when
+provided.
+\end{acknowledgements}
+
+\appendix
+
+\section{Appendix}
+Here is an appendix. If there is more than one appendix the
+heading titles should be descriptive.
+
+\section{Appendix: proof of proposition 1}
+This is an example of a descriptive title. Any numbering style for
+the equations in the appendix will be accepted, provided it is
+consistent and logical.
+
+\columncase{}{\newpage}
+\begin{thebibliography}{8}
+
+\bibitem{ref1}
+Manton, N.S., Speight, J.M.:
+ Asymptotic interactions of critically coupled vortices.
+  Commun. Math. Phys. {\bf 236}, 535--555 (2003)
+
+\bibitem{ref2} Liu, S.: Formal Engineering for Industrial Software
+Developement, pp. 302--350. Springer, Berlin Heidelberg New York (2004)
+
+\bibitem{ref3}
+M. Yousef, S.B. Qadri, E.F. Skelton, Appl. Phys. A {\bf 76}, 133
+(2003)
+
+\bibitem{ref4} C. Bernardini, L. Bonolis, eds., \emph{Enrico Fermi: His Work and
+Legacy} (Springer, Berlin Heidelberg New York, 2004)
+
+\bibitem{ref5}
+Cao JY, Chen YP, Zhou ZD, Ai W (2003) Robust control of switched
+reluctance motors for direct-drive robotic applications. Adv Manuf
+Technol 22:184--190
+
+\bibitem{ref6}
+Craig PJ, Jenkins RO (2004) Organometallic compounds in the
+environment: an overview. In: Hirner AV, Emons H (eds) Organic
+metal and metalloid species in the environment. Springer, Berlin
+Heidelberg New York, pp 1--15
+
+\end{thebibliography}
+
+\begin{authorbiography}{author.eps}{A.N. Author}\
+biography will be printed here if needed. Whether an author
+biography is included per author is set
+per journal. A photo is optional.
+\end{authorbiography}
+\end{document}

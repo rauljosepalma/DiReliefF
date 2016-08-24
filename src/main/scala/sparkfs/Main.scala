@@ -477,18 +477,6 @@ object Main {
     // Reduce verbosity
     sc.setLogLevel("WARN")
     
-    // val baseDir = "/home/raul/Desktop/Datasets/"
-    // val baseDir = "hdfs://master:8020/Datasets/"
-    
-    // val fLocations: Map[String, String] = Map(
-    //   // "URL" -> "Large/URL2009/url_svmlight/head50_Day0.svm",
-    //   // "ECBDL14" -> "Large/ECBDL14/TrainingSet.arff",
-    //   "ECBDL14" -> "Large/ECBDL14/head1000.arff",
-    //   "EPSILON" -> "Large/EPSILON/head1000.libsvm"
-    //   // "KDDB2010" -> "Large/EPSILON/head100.libsvm"
-    // ).map{ case (k,v) => (k, v) }
-
-
     val df = args(0).split('.').last match {
       case "arff" => 
         val (df1, excepts) = readArffToDF(args(0))

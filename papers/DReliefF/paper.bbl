@@ -1,0 +1,242 @@
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{DOI~\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{DOI~\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+
+\bibitem{hadoop}
+{Apache Software Foundation}: {Hadoop}.
+\newblock \urlprefix\url{https://hadoop.apache.org}
+
+\bibitem{Bolón-Canedo2012}
+Bol{\'{o}}n-Canedo, V., S{\'{a}}nchez-Maro{\~{n}}o, N., Alonso-Betanzos, A.: {A
+  review of feature selection methods on synthetic data}.
+\newblock Knowledge and Information Systems \textbf{34}(3), 483--519 (2012).
+\newblock \doi{10.1007/s10115-012-0487-8}.
+\newblock \urlprefix\url{http://dx.doi.org/10.1007/s10115-012-0487-8}
+
+\bibitem{Bolon-Canedo2015}
+Bol{\'{o}}n-Canedo, V., S{\'{a}}nchez-Maro{\~{n}}o, N., Alonso-Betanzos, A.:
+  {Distributed feature selection: An application to microarray data
+  classification}.
+\newblock Applied Soft Computing \textbf{30}, 136--150 (2015).
+\newblock \doi{10.1016/j.asoc.2015.01.035}.
+\newblock
+  \urlprefix\url{http://www.sciencedirect.com/science/article/pii/S156849461500054X}
+
+\bibitem{Bolon-Canedo2015a}
+Bol{\'{o}}n-Canedo, V., S{\'{a}}nchez-Maro{\~{n}}o, N., Alonso-Betanzos, A.:
+  {Recent advances and emerging challenges of feature selection in the context
+  of big data}.
+\newblock Knowledge-Based Systems \textbf{86}, 33--45 (2015).
+\newblock \doi{10.1016/j.knosys.2015.05.014}
+
+\bibitem{Bu2010}
+Bu, Y., Howe, B., Ernst, M.D.: {HaLoop: Efficient Iterative Data Processing on
+  Large Clusters}.
+\newblock Proceedings of the VLDB Endowment \textbf{3}(1-2), 285--296 (2010).
+\newblock \doi{10.14778/1920841.1920881}
+
+\bibitem{Dean2004a}
+Dean, J., Ghemawat, S.: {MapReduce: Simplied Data Processing on Large
+  Clusters}.
+\newblock Proceedings of 6th Symposium on Operating Systems Design and
+  Implementation pp. 137--149 (2004).
+\newblock \doi{10.1145/1327452.1327492}
+
+\bibitem{Dean2008}
+Dean, J., Ghemawat, S.: {MapReduce: Simplified Data Processing on Large
+  Clusters}.
+\newblock Communications of the ACM \textbf{51}(1), 107 (2008).
+\newblock \urlprefix\url{http://dl.acm.org/citation.cfm?id=1327452.1327492}
+
+\bibitem{Ekanayake2010}
+Ekanayake, J., Li, H., Zhang, B., Gunarathne, T., Bae, S.H., Qiu, J., Fox, G.:
+  {Twister: A Runtime for Iterative MapReduce}.
+\newblock In: Proceedings of the 19th ACM International Symposium on High
+  Performance Distributed Computing, HPDC '10, pp. 810--818. ACM, New York, NY,
+  USA (2010).
+\newblock \doi{10.1145/1851476.1851593}.
+\newblock \urlprefix\url{http://doi.acm.org/10.1145/1851476.1851593}
+
+\bibitem{García2015}
+Garc{\'{i}}a, S., Luengo, J., Herrera, F.: {Feature Selection}.
+\newblock In: Data Preprocessing in Data Mining, pp. 163--193. Springer
+  International Publishing, Cham (2015).
+\newblock \doi{10.1007/978-3-319-10247-4_7}.
+\newblock \urlprefix\url{http://dx.doi.org/10.1007/978-3-319-10247-4{\_}7}
+
+\bibitem{Greene2009}
+Greene, C.S., Penrod, N.M., Kiralis, J., Moore, J.H.: {Spatially Uniform
+  ReliefF (SURF) for computationally-efficient filtering of gene-gene
+  interactions}.
+\newblock BioData Mining \textbf{2}(1), 5 (2009).
+\newblock \doi{10.1186/1756-0381-2-5}.
+\newblock
+  \urlprefix\url{http://biodatamining.biomedcentral.com/articles/10.1186/1756-0381-2-5}
+
+\bibitem{Hall2009}
+Hall, M., Frank, E., Holmes, G., Pfahringer, B., Reutemann, P., Witten, I.H.:
+  {The WEKA data mining software}.
+\newblock ACM SIGKDD Explorations Newsletter \textbf{11}(1), 10 (2009).
+\newblock \doi{10.1145/1656274.1656278}.
+\newblock
+  \urlprefix\url{http://portal.acm.org/citation.cfm?doid=1656274.1656278}
+
+\bibitem{Hong1997}
+Hong, S.J.: {Use of Contextual Information for Feature Ranking and
+  Discretization}.
+\newblock IEEE Trans. on Knowl. and Data Eng. \textbf{9}(5), 718--730 (1997).
+\newblock \doi{10.1109/69.634751}.
+\newblock \urlprefix\url{http://dx.doi.org/10.1109/69.634751}
+
+\bibitem{Huang2009}
+Huang, Y., McCullagh, P.J., Black, N.D.: {An optimization of ReliefF for
+  classification in large datasets}.
+\newblock Data {\&} Knowledge Engineering \textbf{68}(11), 1348--1356 (2009).
+\newblock \doi{10.1016/j.datak.2009.07.011}
+
+\bibitem{Kira1992}
+Kira, K., Rendell, L.A.: {A practical approach to feature selection}.
+\newblock Proceedings of the ninth international workshop on Machine learning
+  pp. 249--256 (1992)
+
+\bibitem{Kononenko1994}
+Kononenko, I.: {Estimating attributes: Analysis and extensions of RELIEF}.
+\newblock Machine Learning: ECML-94 \textbf{784}, 171--182 (1994).
+\newblock \doi{10.1007/3-540-57868-4}.
+\newblock
+  \urlprefix\url{http://www.springerlink.com/index/10.1007/3-540-57868-4}
+
+\bibitem{Kubica2011}
+Kubica, J., Singh, S., Sorokina, D.: {Parallel Large-Scale Feature Selection}.
+\newblock In: Scaling Up Machine Learning, February, pp. 352--370 (2011).
+\newblock \doi{10.1017/CBO9781139042918.018}.
+\newblock
+  \urlprefix\url{http://ebooks.cambridge.org/ref/id/CBO9781139042918A143}
+
+\bibitem{Li2016}
+Li, J., Cheng, K., Wang, S., Morstatter, F., Trevino, R.P., Tang, J., Liu, H.:
+  {Feature Selection: A Data Perspective}  (2016).
+\newblock \urlprefix\url{http://arxiv.org/abs/1601.07996}
+
+\bibitem{Liu2016}
+Liu, Y., Xu, L., Li, M.: {The Parallelization of Back Propagation Neural
+  Network in MapReduce and Spark}.
+\newblock International Journal of Parallel Programming pp. 1--20 (2016).
+\newblock \doi{10.1007/s10766-016-0401-1}.
+\newblock \urlprefix\url{http://link.springer.com/10.1007/s10766-016-0401-1}
+
+\bibitem{Meng2015}
+Meng, X., Bradley, J., Yavuz, B., Sparks, E., Venkataraman, S., Liu, D.,
+  Freeman, J., Tsai, D., Amde, M., Owen, S., Xin, D., Xin, R., Franklin, M.J.,
+  Zadeh, R., Zaharia, M., Talwalkar, A.: {MLlib: Machine Learning in Apache
+  Spark}.
+\newblock Journal Of Machine Learning \textbf{17}, 1--7 (2015).
+\newblock \urlprefix\url{http://www.jmlr.org/papers/volume17/15-237/15-237.pdf}
+
+\bibitem{Peng2005}
+Peng, H., Long, F., Ding, C.: {Feature selection based on mutual information:
+  criteria of max-dependency, max-relevance, and min-redundancy.}
+\newblock IEEE transactions on pattern analysis and machine intelligence
+  \textbf{27}(8), 1226--38 (2005).
+\newblock \doi{10.1109/TPAMI.2005.159}.
+\newblock \urlprefix\url{http://www.ncbi.nlm.nih.gov/pubmed/16119262}
+
+\bibitem{Peralta2015}
+Peralta, D., del R{\'{i}}o, S., Ram{\'{i}}rez-Gallego, S., Riguero, I.,
+  Benitez, J.M., Herrera, F.: {Evolutionary Feature Selection for Big Data
+  Classification : A MapReduce Approach Evolutionary Feature Selection for Big
+  Data Classification : A MapReduce Approach}.
+\newblock Mathematical Problems in Engineering \textbf{2015}(JANUARY) (2015).
+\newblock \doi{10.1155/2015/246139}.
+\newblock
+  \urlprefix\url{http://sci2s.ugr.es/sites/default/files/2015-hindawi-peralta.pdf}
+
+\bibitem{Rajaraman2011}
+Rajaraman, A., Ullman, J.D.: {Mining of Massive Datasets}.
+\newblock Lecture Notes for Stanford CS345A Web Mining \textbf{67}, 328 (2011).
+\newblock \doi{10.1017/CBO9781139058452}.
+\newblock \urlprefix\url{http://ebooks.cambridge.org/ref/id/CBO9781139058452}
+
+\bibitem{Reyes2015}
+Reyes, O., Morell, C., Ventura, S.: {Scalable extensions of the ReliefF
+  algorithm for weighting and selecting features on the multi-label learning
+  context}.
+\newblock Neurocomputing \textbf{161}, 168--182 (2015).
+\newblock \doi{10.1016/j.neucom.2015.02.045}.
+\newblock
+  \urlprefix\url{http://www.sciencedirect.com/science/article/pii/S0925231215001940}
+
+\bibitem{Robnik2003}
+Robnik-{\v{S}}ikonja, M., Kononenko, I.: {Theoretical and empirical analysis of
+  ReliefF and RReliefF}.
+\newblock Machine learning \textbf{53}(1-2), 23--69 (2003)
+
+\bibitem{Shi2015}
+Shi, J., Qiu, Y., Minhas, U.F., Jiao, L., Wang, C., Reinwald, B., {\"{O}}zcan,
+  F.: {Clash of the Titans: MapReduce vs. Spark for Large Scale Data
+  Analytics}.
+\newblock Proc. VLDB Endow. \textbf{8}(13), 2110--2121 (2015).
+\newblock \doi{10.14778/2831360.2831365}.
+\newblock \urlprefix\url{http://dx.doi.org/10.14778/2831360.2831365}
+
+\bibitem{Wang2016}
+Wang, Y., Ke, W., Tao, X.: {A Feature Selection Method for Large-Scale Network
+  Traffic Classification Based on Spark}.
+\newblock Information \textbf{7}(1), 6 (2016).
+\newblock \doi{10.3390/info7010006}.
+\newblock \urlprefix\url{http://www.mdpi.com/2078-2489/7/1/6}
+
+\bibitem{XindongWu2014}
+{Xindong Wu}, X., {Xingquan Zhu}, X., {Gong-Qing Wu}, G.Q., {Wei Ding}, W.:
+  {Data mining with big data}.
+\newblock IEEE Transactions on Knowledge and Data Engineering \textbf{26}(1),
+  97--107 (2014).
+\newblock \doi{10.1109/TKDE.2013.109}.
+\newblock
+  \urlprefix\url{http://ieeexplore.ieee.org/lpdocs/epic03/wrapper.htm?arnumber=6547630}
+
+\bibitem{Zafra2012}
+Zafra, A., Pechenizkiy, M., Ventura, S.: {ReliefF-MI: An extension of ReliefF
+  to multiple instance learning}.
+\newblock Neurocomputing \textbf{75}(1), 210--218 (2012).
+\newblock \doi{10.1016/j.neucom.2011.03.052}
+
+\bibitem{Zaharia2012}
+Zaharia, M., Chowdhury, M., Das, T., Dave, A.: {Resilient distributed datasets:
+  A fault-tolerant abstraction for in-memory cluster computing}.
+\newblock NSDI'12 Proceedings of the 9th USENIX conference on Networked Systems
+  Design and Implementation pp. 2--2 (2012).
+\newblock \doi{10.1111/j.1095-8649.2005.00662.x}.
+\newblock
+  \urlprefix\url{https://www.usenix.org/system/files/conference/nsdi12/nsdi12-final138.pdf}
+
+\bibitem{Zaharia2010}
+Zaharia, M., Chowdhury, M., Franklin, M.J., Shenker, S., Stoica, I.: {Spark :
+  Cluster Computing with Working Sets}.
+\newblock HotCloud'10 Proceedings of the 2nd USENIX conference on Hot topics in
+  cloud computing p.~10 (2010).
+\newblock \doi{10.1007/s00256-009-0861-0}
+
+\bibitem{Zhang2008}
+Zhang, Y., Ding, C., Li, T.: {Gene selection algorithm by combining reliefF and
+  mRMR}.
+\newblock BMC Genomics \textbf{9}(Suppl 2), S27 (2008).
+\newblock \doi{10.1186/1471-2164-9-S2-S27}.
+\newblock
+  \urlprefix\url{http://bmcgenomics.biomedcentral.com/articles/10.1186/1471-2164-9-S2-S27}
+
+\bibitem{Zhao2012}
+Zhao, Z., Cox, J., Duling, D., Sarle, W.: {Massively parallel feature
+  selection: An approach based on variance preservation}.
+\newblock Lecture Notes in Computer Science (including subseries Lecture Notes
+  in Artificial Intelligence and Lecture Notes in Bioinformatics) \textbf{7523
+  LNAI}(PART 1), 237--252 (2012).
+\newblock \doi{10.1007/978-3-642-33460-3_21}.
+\newblock
+  \urlprefix\url{http://link.springer.com/10.1007/978-3-642-33460-3{\_}21}
+
+\end{thebibliography}
