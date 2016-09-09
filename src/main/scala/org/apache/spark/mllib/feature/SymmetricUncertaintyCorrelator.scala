@@ -1,4 +1,4 @@
-package sparkfs
+package org.apache.spark.mllib.feature
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.mllib.regression.LabeledPoint

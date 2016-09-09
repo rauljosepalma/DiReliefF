@@ -1,4 +1,4 @@
-package sparkfs
+package org.apache.spark.mllib.feature
 
 import scala.math.Ordered
 import scala.collection.mutable.PriorityQueue

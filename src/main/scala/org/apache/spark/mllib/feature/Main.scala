@@ -1,4 +1,4 @@
-package sparkfs
+package org.apache.spark.mllib.feature
 
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkException
