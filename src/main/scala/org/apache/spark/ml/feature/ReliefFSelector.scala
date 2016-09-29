@@ -1,5 +1,6 @@
-package org.apache.spark.mllib.feature
+package org.apache.spark.ml.feature
 
+import org.apache.spark.annotation.Experimental
 import org.apache.spark.SparkException
 import org.apache.spark.rdd.RDD
 
@@ -7,7 +8,10 @@ import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.ml.attribute._
-import org.apache.spark.ml.feature.VectorSlicer
+import org.apache.spark.ml.param._
+import org.apache.spark.ml.param.shared._
+import org.apache.spark.ml._
+import org.apache.spark.ml.util.Identifiable
 
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.Row
@@ -16,70 +20,102 @@ import scala.math.abs
 
 import scala.collection.mutable
 
-// class NeighborsVector(maxSize: Int) extends java.io.Serializable {
+/**
+ * Params for [[ReliefFSelector]] and [[ReliefFSelectorModel]].
+ */
+private[feature] trait ReliefFSelectorParams extends Params
+  with HasFeaturesCol with HasOutputCol with HasLabelCol {
 
-//   var data: Array[(LabeledPoint, Double)] = Array.empty
-//   var worstIdx = -1
-//   var bestIdx = -1
+  /**
+   * Number of neighbors used by the ReliefF algorithm, commonly known as k.
+   * The default value of numNeighbors is 10.
+   * @group param
+   */
+  final val numNeighbors = new IntParam(this, "numNeighbors",
+    "Number of neighbors used by the ReliefF algorithm, commonly known as k.",
+    ParamValidators.gtEq(1))
+  setDefault(numNeighbors -> 10)
 
-//   def +=(lp: LabeledPoint, d:Double) = { 
-//     data :+ ((lp, d))
-//     if(data.size != 1){
-//       if(d > data(worstIdx)._2) worstIdx = data.size - 1
-//       if(d < data(bestIdx)._2) bestIdx = data.size - 1
-//     } else {
-//       worstIdx = bestIdx = 0
-//     }
-//   }
+  // TODO update default value (in two places comment and code)
+  /**
+   * Number of instances randomly taken from the dataset, commonly known as m.
+   * The default value of sampleSize is 70.
+   * @group param
+   */
+  final val sampleSize = new IntParam(this, "sampleSize",
+    "Number of instances randomly taken from the dataset, commonly known as m.",
+    ParamValidators.gtEq(1))
+  setDefault(sampleSize -> 70)
 
-//   def removeWorst = {
-    
-//   }
+  /**
+   * Sets the algorithm to behave as the Contextual Merit algorithm proposed in
+   * Hong, S. J.: 1997, ‘Use of Contextual Information for Feature Ranking and
+   * Discretization’. IEEE transactions on knowledge and data engineering 9(5),
+   * 718–730. The default value of this parameter is false.
+   * @group param
+   */
+  final val contextualMerit = new BooleanParam(this, "contextualMerit",
+    "Sets the algorithm to behave as the Contextual Merit algorithm proposed in Hong, S. J.: 1997, ‘Use of Contextual Information for Feature Ranking and Discretization’. IEEE transactions on knowledge and data engineering 9(5), 718–730")
+  setDefault(contextualMerit -> false)
 
-// }
+  /**
+   * Proportion of features to select, it should be bigger than 0.0 and less
+   * than or equal to 1.0. It is by default set to 0.15.
+   * @group param
+   */
+  final val selectionThreshold = new DoubleParam(this, "selectionThreshold",
+    "Represents a proportion of features to select, it should be bigger than 0.0 and less than or equal to 1.0. It is by default set to 0.15.",
+    ParamValidators.inRange(0.0, 1.0, lowerInclusive=false, upperInclusive=true))
+  setDefault(selectionThreshold -> 0.15)
 
-// NeighborsHeap uses a BinaryHeap with an Ordering based on the distance were
-// the worst distance is the bigger, both Ordering and ClassTags were needed to
-// be sent, I believe because of all implicits must be sent.
-class NeighborsHeap(capacity: Int) 
-  extends BinaryHeap[(LabeledPoint, Double)](capacity)(
-    math.Ordering.by[(LabeledPoint, Double), Double](_._2 * -1.0),
-    reflect.classTag[(LabeledPoint, Double)])
 
-class NeighborsMatrix(
-  val data: mutable.Map[(Int,Int), NeighborsHeap])
-  extends java.io.Serializable {
-
-  def get(index: (Int, Int)) = data.get(index)
-  def update(
-    index: (Int, Int), 
-    value: NeighborsHeap) = data(index) = value
+    /** @group getParam */
+  def getNumNeighbors: Int = $(numNeighbors)
+  def getSampleSize: Int = $(sampleSize)
+  def getContextualMerit: Boolean = $(contextualMerit)
+  def getSelectionThreshold: Double = $(selectionThreshold)
 
 }
 
-final class ReliefFFSSelector(
-  // TODO create params
-  numOfNeighbors: Int,
-  sampleSize: Int,
-  contextMerit: Boolean,
-  basePath: String // DEBUG
-  )
-  extends java.io.Serializable{
+@Experimental
+final class ReliefFSelector(override val uid: String)
+  extends Estimator[ReliefFSelectorModel] with ReliefFSelectorParams 
+  // with DefaultParamsWritable 
+  {
 
+  def this() = this(Identifiable.randomUID("ReliefFSelector"))
 
+  /** @group setParam */  
+  def setNumNeighbors(value: Int): this.type = set(numNeighbors, value)
+
+  /** @group setParam */  
+  def setSampleSize(value: Int): this.type = set(sampleSize, value)
+
+  /** @group setParam */  
+  def setContextualMerit(value: Boolean): this.type = set(contextualMerit, value)
+
+  /** @group setParam */  
+  def setFeaturesCol(value: String): this.type = set(featuresCol, value)
+
+  /** @group setParam */  
+  def setOutputCol(value: String): this.type = set(outputCol, value)
+
+  /** @group setParam */  
+  def setLabelCol(value: String): this.type = set(labelCol, value)
+  
   // If received DataFrame doesn't contains attrs in metadata
-  // theya area assumed to be numeric, this is important because
+  // they are assumed to be numeric, this is important because
   // some high dim datasets, would contain too much repeated ml attrs.
   // 
   // The label column must contain labels starting from 0 and ending in numOfLabels - 1
-  def fit(data: DataFrame): ReliefFFSSelectorModel = {
+  override def fit(data: DataFrame): ReliefFSelectorModel = {
 
     // Transform DataFrame to RDD[LabeledPoint]
     val LPData: RDD[LabeledPoint] = 
       data.select("features", "label").map {
       case Row(features: Vector, label: Double) =>
         LabeledPoint(label, features)
-    }
+      }
     LPData.cache
 
     val numOfFeats = LPData.take(1)(0).features.size
@@ -155,7 +191,6 @@ final class ReliefFFSSelector(
         .map { lp => (lp.label.toInt,1) }
         .reduceByKey { _+_ }
         .map { case (c, count) => (c, count.toDouble / numOfInstances) }
-        // .collect()
         .collect
         .toMap
     )
@@ -173,7 +208,7 @@ final class ReliefFFSSelector(
 
         // // tEqu is the maximum distance for two attrs to be considered equal
         // val tEqu = 0.05 * (max - min)
-        // // tDif is the minimun distance for two attrs to be considered different
+        // // tDif is the minimum distance for two attrs to be considered different
         // val tDif = 0.10 * (max - min)
 
         // val dist = abs(i1.features(idx) - i2.features(idx))
@@ -216,7 +251,7 @@ final class ReliefFFSSelector(
     
     // Take random samples from LPData
     val samples: Array[LabeledPoint] = 
-      LPData.takeSample(withReplacement=false, num=sampleSize)
+      LPData.takeSample(withReplacement=false, num=$(sampleSize))
 
 
 
@@ -244,9 +279,9 @@ final class ReliefFFSSelector(
       NeighborsMatrix = {
 
         (0 until samples.size).foreach { i =>
-          // If ContextMerit behavior is enabled, ignore instances with same
+          // If ContextualMerit behavior is enabled, ignore instances with same
           // class
-          if(!contextMerit || 
+          if(!$(contextualMerit) || 
              instWithDist._1.label.toInt != samples(i).label.toInt) {
 
             neighborsMatrix.get((instWithDist._1.label.toInt, i)) match {
@@ -261,8 +296,8 @@ final class ReliefFFSSelector(
                 // this heap is longer it won't affect the sumsOfDiffs beacuse
                 // the contribution of the sample will be 0.
                 val capacity = 
-                  if(instWithDist._1.label.toInt == samples(i).label.toInt) numOfNeighbors + 1 
-                  else numOfNeighbors
+                  if(instWithDist._1.label.toInt == samples(i).label.toInt) $(numNeighbors) + 1 
+                  else $(numNeighbors)
 
                 val heap = new NeighborsHeap(capacity)
                 heap += ((instWithDist._1, instWithDist._2(i)))
@@ -301,17 +336,17 @@ final class ReliefFFSSelector(
                   neighborsMatrixA((c, i)) = neighborsHeapB
                 
                 case None =>
-                  // If ContextMerit behavior is enabled, do not create
+                  // If ContextualMerit behavior is enabled, do not create
                   // a NeighborsHeap for same class neighbors.
-                  if(!contextMerit || c != samples(i).label.toInt) {
+                  if(!$(contextualMerit) || c != samples(i).label.toInt) {
 
                     // The heap of neighbors of same class accepts one more
                     // element, to make space for the original sample. Even
                     // when this heap is longer it won't affect the sumsOfDiffs
                     // beacuse the contribution of the sample will be 0.
                     val capacity = 
-                      if(c == samples(i).label.toInt) numOfNeighbors + 1 
-                      else numOfNeighbors
+                      if(c == samples(i).label.toInt) $(numNeighbors) + 1 
+                      else $(numNeighbors)
 
                     neighborsMatrixA((c, i)) = new NeighborsHeap(capacity)
                   }
@@ -326,26 +361,28 @@ final class ReliefFFSSelector(
 
     // val emptyMatrix = new NeighborsMatrix(mutable.Map.empty)
 
-    // In the case of ContexMerit behavior, the nearestNeighbors matrix,
-    // will simply not contain heaps for same class neighbors, and that
+    // In the case of ContextualMerit behavior, the nearestNeighbors matrix,
+    // simply won't contain heaps for same class neighbors, and that
     // way they will not affect the weights calculation in subsequent steps.
     val nearestNeighbors: mutable.Map[(Int,Int), Array[LabeledPoint]] =
       dataWithDistances.aggregate(new NeighborsMatrix(mutable.Map.empty))(
         nearestNeighborsSelector, nearestNeighborsCombinator)
-          // Turn queue into array and drop distances
-          .data.map{ case (k, q) => (k, q.toArray.map(_._1)) }
+          .data
+            // Turn queue into array and drop distances
+            .map{ case (k, q) => (k, q.toArray.map(_._1)) }
+            // Remove the samples from the nearestNeighbors
+            .map{ case ((c, i), neighbors) => 
+              if (c == samples(i).label.toInt)
+                ((c, i), neighbors.filter { n => n eq samples(i) } )
+              else
+                ((c, i), neighbors)      
+            }
 
-    // Validate if enough neighbors for each class were found
+    // Checka and log if not enough neighbors for each class were found
     nearestNeighbors.foreach{ case ((c, i), neighbors) => 
-
-      val correctNumOfNeighbors = 
-        if (c == samples(i).label.toInt) numOfNeighbors + 1 
-        else numOfNeighbors
-
-      if(neighbors.size != correctNumOfNeighbors) {
-        throw new SparkException(s"Error: couldn't find enough neighbors for sample in class $c, ${neighbors.size}/$correctNumOfNeighbors")
+      if(neighbors.size != $(numNeighbors)) {
+        logInfo(s"Couldn't find enough neighbors for sample in class $c, ${neighbors.size}/" + $(numNeighbors).toString)
       }
-
     }
 
     val sumsOfDiffs: mutable.Map[(Int, Int), IndexedSeq[Double]] =
@@ -370,15 +407,17 @@ final class ReliefFFSSelector(
             // Its a miss
               (priors(c) / (1.0 - priors(samples(i).label.toInt))) * sumsOfDiffs(c,i)(f)
             }
-          }.sum
+          }.sum / nearestNeighbors(c,i).size
         }.sum
       }
       // Divide by m and k
-      .map { w => w / (samples.size * numOfNeighbors) }
+      // .map { w => w / (samples.size * $(numNeighbors)) }
+      // Divide by m
+      .map { w => w / samples.size }
     )
 
     // DEBUG
-    // This should be zero when ContextMerit is enabled.
+    // This should be zero when ContextualMerit is enabled.
     val totalHitsContributions: Double = 
       (0 until numOfFeats).map { f => 
         (0 until samples.size).map { i =>
@@ -393,58 +432,101 @@ final class ReliefFFSSelector(
           }.sum
         }.sum
       }.sum
-    var file = new java.io.FileWriter(s"${basePath}_hits_contrib.txt", true)
-    file.write(totalHitsContributions.toString)
-    file.close
+    assert(!($(contextualMerit) && totalHitsContributions == 0.0), s"Error totalHitsContributions should be 0.0 when ContextualMerit is enabled, but it is equal to ${totalHitsContributions}")
 
-    // TODO read and use KNN ratio as param
-    new ReliefFFSSelectorModel(weights, true)
+    copyValues(new ReliefFSelectorModel(uid, weights, totalHitsContributions).setParent(this)) // DEBUG
+  }
+
+  // NeighborsHeap uses a BinaryHeap with an Ordering based on the distance
+  // were the worst distance is the bigger, both Ordering and ClassTags were
+  // needed to be sent, I believe because of all implicits must be sent.
+  private class NeighborsHeap(capacity: Int) 
+    extends BinaryHeap[(LabeledPoint, Double)](capacity)(
+      math.Ordering.by[(LabeledPoint, Double), Double](_._2 * -1.0),
+      reflect.classTag[(LabeledPoint, Double)])
+
+  private class NeighborsMatrix(
+    val data: mutable.Map[(Int,Int), NeighborsHeap])
+    extends java.io.Serializable {
+
+    def get(index: (Int, Int)) = data.get(index)
+    def update(
+      index: (Int, Int), 
+      value: NeighborsHeap) = data(index) = value
 
   }
 
-  
+  override def copy(extra: org.apache.spark.ml.param.ParamMap): org.apache.spark.ml.Estimator[org.apache.spark.ml.feature.ReliefFSelectorModel] = ???
+
+  def transformSchema(schema: org.apache.spark.sql.types.StructType): org.apache.spark.sql.types.StructType = ???
+
 }
 
-final class ReliefFFSSelectorModel(
-  val featuresWeights: IndexedSeq[Double],
-  val useKnnSelection: Boolean,
-  val selectionThreshold: Double = 0.0) {
 
-  require(selectionThreshold <= 1.0 && selectionThreshold >= 0.0,
-    "Error selectionThreshold must be between 0.0 and 1.0")
+/**
+ * :: Experimental ::
+ * Model fitted by [[ReliefFSelector]].
+ */
+@Experimental
+final class ReliefFSelectorModel private[ml] (
+    override val uid: String,
+    val featuresWeights: IndexedSeq[Double],
+    // DEBUG
+    val totalHitsContributions:Double)
+  extends Model[ReliefFSelectorModel] with ReliefFSelectorParams 
+    // with MLWritable 
+  {
 
-  def transform(data: DataFrame): DataFrame = {
+  /** @group setParam */
+  def setSelectionThreshold(value: Double): this.type = 
+    set(selectionThreshold, value)
 
-    val selectedFeatures: Array[Int] = 
-      if(useKnnSelection) {
-        
-        val weights: Map[Int, Double] = (featuresWeights.indices zip featuresWeights).toMap
+  /** @group setParam */
+  def setFeaturesCol(value: String): this.type = set(featuresCol, value)
 
-        knnBestFeatures(weights, 0.5, -0.5)
+  /** @group setParam */
+  def setOutputCol(value: String): this.type = set(outputCol, value)
 
-      } else {
+  /** @group setParam */
+  def setLabelCol(value: String): this.type = set(labelCol, value)
 
-        // Sorted features from most relevant to least
-        val sortedFeats: Array[(Int, Double)] = 
-          (featuresWeights.indices zip featuresWeights).sorted(Ordering.by[(Int, Double), Double](_._2 * -1.0)).toArray
+  override def transform(data: DataFrame): DataFrame = {
+
+    val selectedFeatures: Array[Int] = {
+
+        // Sorted features from most relevant to least (weight, index)
+        val sortedFeats: Array[(Double, Int)] = 
+          (featuresWeights.zipWithIndex).sorted(Ordering.by[(Double, Int), Double](_._1 * -1.0)).toArray
 
         // Slice according threshold
         (sortedFeats
-          .slice(0,(sortedFeats.size * selectionThreshold).round.toInt)
-          .map(_._1))
+          .slice(0,(sortedFeats.size * $(selectionThreshold)).round.toInt)
+          .map(_._2))
       }
 
+    //   if(useKnnSelection) {
+        
+    //     val weights: Map[Int, Double] = (featuresWeights.indices zip featuresWeights).toMap
 
-    var slicer = new VectorSlicer().setInputCol("features").setOutputCol("selectedFeatures")
-    slicer.setIndices(selectedFeatures)
+    //     knnBestFeatures(weights, 0.5, -0.5)
+
+    //   } 
+
+    val slicer = (new VectorSlicer()
+      .setInputCol(featuresCol.name)
+      .setOutputCol(outputCol.name)
+      .setIndices(selectedFeatures))
 
     // Return reduced Dataframe
-    (slicer
-      .transform(data)
-      .selectExpr("selectedFeatures as features", "label"))
+    // (slicer
+    //   .transform(data)
+    //   .selectExpr("selectedFeatures as features", "label"))
+    slicer.transform(data)
   }
 
-  def saveFeats(basePath: String): Unit = {
+  // override def transformSchema(schema: StructType): StructType
+
+  def saveResults(basePath: String): Unit = {
     
     println("Adding weights to file:")
     var file = new java.io.FileWriter(s"${basePath}_feats_weights.txt", true)
@@ -497,44 +579,95 @@ final class ReliefFFSSelectorModel(
     file.close
     println("total: " + bestFeats75Perc.size)
 
-    println("saving knn best feats:")
-    weights = (featuresWeights.indices zip featuresWeights).toMap
-    bestFeatures = knnBestFeatures(weights, 0.5, -0.5)
-    file = new java.io.FileWriter(s"${basePath}_feats_knn.txt", true)
-    bestFeatures.foreach(feat => file.write(feat.toString + "\n"))
+    println("saving hits contribution:")
+    file = new java.io.FileWriter(s"${basePath}_hits_contrib.txt", true)
+    file.write(totalHitsContributions.toString)
     file.close
-    println("total: " + bestFeatures.size)
+
+    // println("saving knn best feats:")
+    // weights = (featuresWeights.indices zip featuresWeights).toMap
+    // bestFeatures = knnBestFeatures(weights, 0.5, -0.5)
+    // file = new java.io.FileWriter(s"${basePath}_feats_knn.txt", true)
+    // bestFeatures.foreach(feat => file.write(feat.toString + "\n"))
+    // file.close
+    // println("total: " + bestFeatures.size)
 
   }
 
+  override def copy(extra: org.apache.spark.ml.param.ParamMap): org.apache.spark.ml.feature.ReliefFSelectorModel = ???
 
-  def knnBestFeatures(weights: Map[Int, Double], centerA: Double, centerB: Double):
-   Array[Int] = {
-    // Map of feature indexes and weights
-    val clusterA: Map[Int, Double] = weights.filter { 
-      case (idx, weight) => 
-        val distanceA = math.pow(weight - centerA, 2)
-        val distanceB = math.pow(weight - centerB, 2)
+  def transformSchema(schema: org.apache.spark.sql.types.StructType): org.apache.spark.sql.types.StructType = ???
 
-        (distanceA < distanceB)
-    }
-
-    val clusterB = weights -- clusterA.map(_._1)
-
-    val newCenterA = clusterA.map(_._2).sum / clusterA.size
-    val newCenterB = clusterB.map(_._2).sum / clusterB.size
-
-    if((abs(newCenterA - centerA) > 1e-6) || (abs(newCenterB - centerB) > 1e-6))
-      knnBestFeatures(weights, newCenterA, newCenterB)
-    else {
-      if (centerA > centerB)
-        clusterA.map(_._1).toArray
-      else
-        clusterB.map(_._1).toArray
-    }
-
-  }
 }
+
+// final class ReliefFSelectorModel(
+//   val featuresWeights: IndexedSeq[Double],
+//   val useKnnSelection: Boolean,
+//   val selectionThreshold: Double = 0.0) {
+
+//   require(selectionThreshold <= 1.0 && selectionThreshold >= 0.0,
+//     "Error selectionThreshold must be between 0.0 and 1.0")
+
+//   def transform(data: DataFrame): DataFrame = {
+
+//     val selectedFeatures: Array[Int] = 
+//       if(useKnnSelection) {
+        
+//         val weights: Map[Int, Double] = (featuresWeights.indices zip featuresWeights).toMap
+
+//         knnBestFeatures(weights, 0.5, -0.5)
+
+//       } else {
+
+//         // Sorted features from most relevant to least
+//         val sortedFeats: Array[(Int, Double)] = 
+//           (featuresWeights.indices zip featuresWeights).sorted(Ordering.by[(Int, Double), Double](_._2 * -1.0)).toArray
+
+//         // Slice according threshold
+//         (sortedFeats
+//           .slice(0,(sortedFeats.size * selectionThreshold).round.toInt)
+//           .map(_._1))
+//       }
+
+
+//     var slicer = new VectorSlicer().setInputCol("features").setOutputCol("selectedFeatures")
+//     slicer.setIndices(selectedFeatures)
+
+//     // Return reduced Dataframe
+//     (slicer
+//       .transform(data)
+//       .selectExpr("selectedFeatures as features", "label"))
+//   }
+
+
+
+//   def knnBestFeatures(weights: Map[Int, Double], centerA: Double, centerB: Double):
+//    Array[Int] = {
+//     // Map of feature indexes and weights
+//     val clusterA: Map[Int, Double] = weights.filter { 
+//       case (idx, weight) => 
+//         val distanceA = math.pow(weight - centerA, 2)
+//         val distanceB = math.pow(weight - centerB, 2)
+
+//         (distanceA < distanceB)
+//     }
+
+//     val clusterB = weights -- clusterA.map(_._1)
+
+//     val newCenterA = clusterA.map(_._2).sum / clusterA.size
+//     val newCenterB = clusterB.map(_._2).sum / clusterB.size
+
+//     if((abs(newCenterA - centerA) > 1e-6) || (abs(newCenterB - centerB) > 1e-6))
+//       knnBestFeatures(weights, newCenterA, newCenterB)
+//     else {
+//       if (centerA > centerB)
+//         clusterA.map(_._1).toArray
+//       else
+//         clusterB.map(_._1).toArray
+//     }
+
+//   }
+// }
 
 /*
 

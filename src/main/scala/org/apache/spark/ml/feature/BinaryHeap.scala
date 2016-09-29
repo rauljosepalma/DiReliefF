@@ -1,5 +1,5 @@
 // TODO This class should be on this package
-package org.apache.spark.mllib.feature
+package org.apache.spark.ml.feature
 
 // class BinaryHeap[T: reflect.ClassTag](capacity: Int)(implicit ord: math.Ordering[T]) extends java.io.Serializable {
 class BinaryHeap[T](capacity: Int)

@@ -1,4 +1,4 @@
-package org.apache.spark.mllib.feature
+package org.apache.spark.ml.feature
 
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkException
@@ -11,7 +11,6 @@ import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.apache.spark.ml.attribute.{Attribute, AttributeGroup,NominalAttribute, NumericAttribute}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
-import org.apache.spark.ml.feature.VectorAssembler
 
 import scala.collection.Map
 import scala.collection.mutable
@@ -514,11 +513,21 @@ object Main {
     // Ex.: /root/ECBDL14_k10m40_feats_weights.txt
     val basePath = args(1) + "/" + baseName + "_k" + args(2) + "m" + args(3)
 
-    val model = 
-      new ReliefFFSSelector(
-        args(2).toInt, args(3).toInt, 
-        args(4).toBoolean, basePath).fit(df)
-    model.saveFeats(basePath)
+    // val model = 
+    //   new ReliefFSelector(
+    //     args(2).toInt, args(3).toInt, 
+    //     args(4).toBoolean, basePath).fit(df)
+    // model.saveFeats(basePath)
+
+    val model = (new ReliefFSelector()
+      .setNumNeighbors(args(2).toInt)
+      .setSampleSize(args(3).toInt)
+      .setContextualMerit(args(4).toBoolean)
+      .setFeaturesCol("features")
+      .setOutputCol("selectedFeatures")
+      .setLabelCol("label")
+      .fit(df))
+    model.saveResults(basePath)
 
     // println("Weights:")
     // model.featuresWeights.zipWithIndex.foreach{ case (w,i) => 
