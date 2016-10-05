@@ -107,7 +107,8 @@ final class ReliefFSelector(override val uid: String)
   // they are assumed to be numeric, this is important because
   // some high dim datasets, would contain too much repeated ml attrs.
   // 
-  // The label column must contain labels starting from 0 and ending in numOfLabels - 1
+  // The label column must contain labels starting from 0 and ending in
+  // numOfLabels - 1
   override def fit(data: DataFrame): ReliefFSelectorModel = {
 
     // Transform DataFrame to RDD[LabeledPoint]
@@ -378,7 +379,7 @@ final class ReliefFSelector(override val uid: String)
                 ((c, i), neighbors)      
             }
 
-    // Checka and log if not enough neighbors for each class were found
+    // Check and log if not enough neighbors for each class were found
     nearestNeighbors.foreach{ case ((c, i), neighbors) => 
       if(neighbors.size != $(numNeighbors)) {
         logInfo(s"Couldn't find enough neighbors for sample in class $c, ${neighbors.size}/" + $(numNeighbors).toString)
@@ -392,28 +393,29 @@ final class ReliefFSelector(override val uid: String)
                     (neighbors
                         .map { lp => diff(f, lp, samples(i)) }    
                         .sum
-                    )
+                    ) / ( neighbors.size * samples.size )
                   })
       }
 
     val weights: IndexedSeq[Double] = (
       (0 until numOfFeats).map { f => 
         (0 until samples.size).map { i =>
-          classes.map { c =>
-            if (c == samples(i).label.toInt) {
-            // Its a hit
-              -sumsOfDiffs(c,i)(f)
-            } else {
-            // Its a miss
-              (priors(c) / (1.0 - priors(samples(i).label.toInt))) * sumsOfDiffs(c,i)(f)
-            }
-          }.sum / nearestNeighbors(c,i).size
+          classes.map { c => 
+            ( if (c == samples(i).label.toInt) {
+              // Its a hit
+                -sumsOfDiffs(c,i)(f)
+              } else {
+              // Its a miss
+                (priors(c) / (1.0 - priors(samples(i).label.toInt))) * sumsOfDiffs(c,i)(f)
+              } /// nearestNeighbors((c,i)).size
+            )
+          }.sum 
         }.sum
       }
       // Divide by m and k
       // .map { w => w / (samples.size * $(numNeighbors)) }
       // Divide by m
-      .map { w => w / samples.size }
+      // .map { w => w / samples.size }
     )
 
     // DEBUG

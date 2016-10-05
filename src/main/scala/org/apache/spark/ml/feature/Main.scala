@@ -69,7 +69,7 @@ object Main {
 
   // This is used in case a long process is executed, the ssh pipe
   // can fail so is better to store output in the driver.
-  private def outputInfoLine(info: String) = {
+  def outputInfoLine(info: String) = {
 
     // try {
     val f = new java.io.FileWriter("/root/debug.txt", true)
@@ -83,8 +83,8 @@ object Main {
   // returns  DataFrame with two cols: features and label,
   // it also returns a HashSet with possible exceptions captured
   // during file parsing
-  private def readArffToDF(fLocation: String)
-    (implicit sc: SparkContext, sqlContext: SQLContext): 
+  def readArffToDF(fLocation: String)
+    (implicit sc: SparkContext, sqlCtxt: SQLContext): 
     (DataFrame, mutable.HashSet[(String, Throwable)]) = {
 
     val lines = sc.textFile(fLocation)
@@ -186,7 +186,7 @@ object Main {
     val dfSchema = StructType(fields)
 
     // Create DataFrame
-    val df = sqlContext.createDataFrame(doublesRDD, dfSchema)
+    val df = sqlCtxt.createDataFrame(doublesRDD, dfSchema)
 
     // Merge features except class
     // This merge conserves the metadata
@@ -211,7 +211,7 @@ object Main {
 
   // Creates am AttributeGroup with NumericAttributes for the features column
   // and a NominalAttribute for the label column
-  // private def numFeatNomLabelSchGenerator(
+  // def numFeatNomLabelSchGenerator(
   //   numOfFeats: Int,
   //   labels: Array[String]): StructType = {
 
@@ -239,11 +239,11 @@ object Main {
   // Reads an SVM file to a DataFrame (and correctly sets its schema)
   // Caution: some SVM datasets have too many feats, so initiliatizing 
   // its metadata is not feasible
-  private def readSVMToDF(
+  def readSVMToDF(
     fLocation:String,
     nFeats: Int,
     labels: Array[String])
-    (implicit sqlContext: SQLContext): DataFrame = {
+    (implicit sqlCtxt: SQLContext): DataFrame = {
 
       val featsArray: Array[Attribute] = ((0 until nFeats)
       .map { a => 
@@ -260,7 +260,7 @@ object Main {
     val labelAttr = 
       NominalAttribute.defaultAttr.withName("label").withValues(labels)
 
-    val df = sqlContext.read.format("libsvm").load(fLocation)
+    val df = sqlCtxt.read.format("libsvm").load(fLocation)
     
     // Add metadata to a DataFrame
     df.select(
@@ -280,8 +280,8 @@ object Main {
 
 
 
-  // private def readCSVToDF(fLocation: String, )
-  //   (implicit sc: SparkContext, sqlContext: SQLContext): 
+  // def readCSVToDF(fLocation: String, )
+  //   (implicit sc: SparkContext, sqlCtxt: SQLContext): 
   //   (DataFrame, mutable.HashSet[(String, Throwable)]) = {
 
   //   val lines = sc.textFile(fLocation)
@@ -381,7 +381,7 @@ object Main {
   //   val dfSchema = StructType(fields)
 
   //   // Create DataFrame
-  //   val df = sqlContext.createDataFrame(doublesRDD, dfSchema)
+  //   val df = sqlCtxt.createDataFrame(doublesRDD, dfSchema)
 
   //   // Merge features except class
   //   // This merge conserves the metadata
@@ -406,7 +406,7 @@ object Main {
 
 
   // // Assumes that the class is in the first column
-  // private def parseNumericCSVtoLabeledPoint(lines:RDD[String]): 
+  // def parseNumericCSVtoLabeledPoint(lines:RDD[String]): 
   //   RDD[LabeledPoint] = {
     
   //   (lines
@@ -420,7 +420,7 @@ object Main {
   // }
 
   // // Assumes that the class is in the first column
-  // private def parseNominalCSVtoLabeledPoint(lines:RDD[String]): 
+  // def parseNominalCSVtoLabeledPoint(lines:RDD[String]): 
   //   RDD[LabeledPoint] = {
 
 
@@ -448,7 +448,7 @@ object Main {
   // }
 
   // Find distinct classes in data
-  // private def findClasses(data: RDD[LabeledPoint]): Array[Int] = (
+  // def findClasses(data: RDD[LabeledPoint]): Array[Int] = (
   //   data
   //     .map { lp => lp.label.toInt }
   //     .distinct()
@@ -471,7 +471,7 @@ object Main {
     // val conf = new SparkConf().setAppName("sparkfs").setMaster("local")
     val conf = new SparkConf().setAppName("sparkfs")
     implicit val sc = new SparkContext(conf)
-    implicit val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+    implicit val sqlCtxt = new org.apache.spark.sql.SQLContext(sc)
 
     // Reduce verbosity
     sc.setLogLevel("WARN")
@@ -498,7 +498,7 @@ object Main {
       case "libsvm" => 
         readSVMToDF(args(0), args(2).toInt, Array(args(3), args(4)))
       case "parquet" =>
-        sqlContext.read.parquet(args(0))
+        sqlCtxt.read.parquet(args(0))
     }
 
     // ReliefF Model
@@ -545,7 +545,7 @@ object Main {
     // import org.apache.spark.ml.feature.VectorSlicer
 
     // val dfTrain = df
-    // val dfTest = sqlContext.read.parquet(args(0).split('_').head + "_test.parquet")
+    // val dfTest = sqlCtxt.read.parquet(args(0).split('_').head + "_test.parquet")
 
     // // read selectedFeats from file
     // var dfReducedTrain: DataFrame = null 
@@ -632,7 +632,7 @@ object Main {
 
     // DataFrame Merger
 
-    // val df2 = sqlContext.read.parquet(args(1))
+    // val df2 = sqlCtxt.read.parquet(args(1))
     // val dfTot = df.unionAll(df2)
     // dfTot.write.format("parquet").save(args(0) + "merged.parquet")
 
