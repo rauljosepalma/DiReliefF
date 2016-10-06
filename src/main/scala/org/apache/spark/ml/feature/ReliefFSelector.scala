@@ -253,13 +253,7 @@ final class ReliefFSelector(override val uid: String)
     // Take random samples from LPData
     val samples: Array[LabeledPoint] = 
       LPData.takeSample(withReplacement=false, num=$(sampleSize))
-
-
-
-    // DEBUG
-    // println("SELECTED INSTANCES:")
-    // samples.foreach(println)
-    
+   
 
     // Find distances from all instances to the m sample instances
     // There is no need to cache dataWithDistances, because it will traversed
@@ -289,10 +283,9 @@ final class ReliefFSelector(override val uid: String)
               case Some(neighborsHeap) =>
                 neighborsHeap += ((instWithDist._1, instWithDist._2(i)))
               case None =>
-                // Create empty NeighborsHeap, define Ordering by distance, and
-                // add the element
+                // Create empty NeighborsHeap and add the element
 
-                // The heap of neighbors of same class accepts one more
+                // The heap for same class neighbors accepts one more
                 // element, to make space for the original sample. Even when
                 // this heap is longer it won't affect the sumsOfDiffs beacuse
                 // the contribution of the sample will be 0.
@@ -360,29 +353,22 @@ final class ReliefFSelector(override val uid: String)
         
     }
 
-    // val emptyMatrix = new NeighborsMatrix(mutable.Map.empty)
-
     // In the case of ContextualMerit behavior, the nearestNeighbors matrix,
     // simply won't contain heaps for same class neighbors, and that
     // way they will not affect the weights calculation in subsequent steps.
     val nearestNeighbors: mutable.Map[(Int,Int), Array[LabeledPoint]] =
       dataWithDistances.aggregate(new NeighborsMatrix(mutable.Map.empty))(
         nearestNeighborsSelector, nearestNeighborsCombinator)
-          .data
-            // Turn queue into array and drop distances
-            .map{ case (k, q) => (k, q.toArray.map(_._1)) }
-            // Remove the samples from the nearestNeighbors
-            .map{ case ((c, i), neighbors) => 
-              if (c == samples(i).label.toInt)
-                ((c, i), neighbors.filter { n => n eq samples(i) } )
-              else
-                ((c, i), neighbors)      
-            }
+          // Turn queue into array and drop distances
+          .data.map{ case (k, q) => (k, q.toArray.map(_._1)) }
 
     // Check and log if not enough neighbors for each class were found
     nearestNeighbors.foreach{ case ((c, i), neighbors) => 
-      if(neighbors.size != $(numNeighbors)) {
-        logInfo(s"Couldn't find enough neighbors for sample in class $c, ${neighbors.size}/" + $(numNeighbors).toString)
+      val size = 
+        if (c == samples(i).label.toInt) neighbors.size - 1 else neighbors.size
+      
+      if(size != $(numNeighbors)) {
+        logInfo(s"Couldn't find enough neighbors for sample in class $c, ${size}/" + $(numNeighbors).toString)
       }
     }
 
@@ -391,9 +377,17 @@ final class ReliefFSelector(override val uid: String)
         ((c,i), (0 until numOfFeats)
                   .map { f => 
                     (neighbors
-                        .map { lp => diff(f, lp, samples(i)) }    
-                        .sum
-                    ) / ( neighbors.size * samples.size )
+                      .map { lp => diff(f, lp, samples(i)) }    
+                      .sum
+                    ) / ( 
+                      // Divide by m * k 
+                      // The sample isn't taken into account as a neighbor 
+                      if (c == samples(i).label.toInt) {
+                        (neighbors.size - 1) * samples.size
+                      } else {
+                        neighbors.size * samples.size
+                      }
+                    )
                   })
       }
 
@@ -401,21 +395,17 @@ final class ReliefFSelector(override val uid: String)
       (0 until numOfFeats).map { f => 
         (0 until samples.size).map { i =>
           classes.map { c => 
-            ( if (c == samples(i).label.toInt) {
-              // Its a hit
-                -sumsOfDiffs(c,i)(f)
-              } else {
-              // Its a miss
-                (priors(c) / (1.0 - priors(samples(i).label.toInt))) * sumsOfDiffs(c,i)(f)
-              } /// nearestNeighbors((c,i)).size
-            )
+            if (c == samples(i).label.toInt) {
+            // Its a hit
+              -sumsOfDiffs(c,i)(f)
+            } else {
+            // Its a miss
+              (priors(c) / (1.0 - priors(samples(i).label.toInt))) * sumsOfDiffs(c,i)(f)
+            } 
           }.sum 
         }.sum
       }
-      // Divide by m and k
-      // .map { w => w / (samples.size * $(numNeighbors)) }
-      // Divide by m
-      // .map { w => w / samples.size }
+
     )
 
     // DEBUG
