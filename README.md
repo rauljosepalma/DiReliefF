@@ -1,3 +1,7 @@
+## News
+
+The source code will be released after the associated paper has been accepted for publication.
+
 ## Original ReliefF
 
 ReliefF is a popular feature weightning algorithm, it was published by Kononenko in 1994 [1] as an extension of the original Relief algorithm developed by Kira and Rendell [2]. ReliefF's central idea consists in evaluating the quality of the features by their ability to distinguish the instances from one class to another in a local neighborhood, i.e. the best features are those contribute more to add distance between different class instances and contribute less to add distance between same class instances. 
