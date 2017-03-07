@@ -68,15 +68,37 @@ private[feature] trait ReliefFSelectorParams extends Params
     ParamValidators.inRange(0.0, 1.0, lowerInclusive=false, upperInclusive=true))
   setDefault(selectionThreshold -> 0.15)
 
+  /**
+   * Chooses wheter the algorithm should use cache to store the dataset. Using 
+   * cache is only useful when one can assure that the whole dataset will fit
+   * into the cluster's memory
+   * @group param
+  */
+  final val useCache = new BooleanParam(this, "useCache",
+    "Chooses wheter the algorithm should use cache to store the dataset. Using cache is only useful when one can assure that the whole dataset will fit into the cluster's memory")
+  setDefault(useCache -> false)
+
+  /**
+   * Chooses wheter the algorithm should use the ramp function to calculate 
+   * the difference between numerical features of instances.
+   * @group param
+  */
+  final val useRamp = new BooleanParam(this, "useRamp",
+    "Chooses wheter the algorithm should use the ramp function to calculate the difference between numerical features of instances")
+  setDefault(useRamp -> false)
+
 
     /** @group getParam */
   def getNumNeighbors: Int = $(numNeighbors)
   def getSampleSize: Int = $(sampleSize)
   def getContextualMerit: Boolean = $(contextualMerit)
+  def getUseCache: Boolean = $(useCache)
+  def getUseRamp: Boolean = $(useRamp)
   def getSelectionThreshold: Double = $(selectionThreshold)
 
 }
 
+// TODO Features, label, and output cols parameters are ignored!!!
 @Experimental
 final class ReliefFSelector(override val uid: String)
   extends Estimator[ReliefFSelectorModel] with ReliefFSelectorParams 
@@ -93,6 +115,12 @@ final class ReliefFSelector(override val uid: String)
 
   /** @group setParam */  
   def setContextualMerit(value: Boolean): this.type = set(contextualMerit, value)
+
+  /** @group setParam */  
+  def setUseCache(value: Boolean): this.type = set(useCache, value)
+
+  /** @group setParam */  
+  def setUseRamp(value: Boolean): this.type = set(useRamp, value)
 
   /** @group setParam */  
   def setFeaturesCol(value: String): this.type = set(featuresCol, value)
@@ -117,7 +145,11 @@ final class ReliefFSelector(override val uid: String)
       case Row(features: Vector, label: Double) =>
         LabeledPoint(label, features)
       }
-    LPData.cache
+    
+    // Caching is only useful when the full dataset fits in memory
+    if($(useCache)) {
+      LPData.cache
+    }
 
     val numOfFeats = LPData.take(1)(0).features.size
 
@@ -207,26 +239,28 @@ final class ReliefFSelector(override val uid: String)
         val max = attrs(idx).asInstanceOf[NumericAttribute].max.get
         val min = attrs(idx).asInstanceOf[NumericAttribute].min.get
 
-        // // tEqu is the maximum distance for two attrs to be considered equal
-        // val tEqu = 0.05 * (max - min)
-        // // tDif is the minimum distance for two attrs to be considered different
-        // val tDif = 0.10 * (max - min)
+        if($(useRamp)) {
+          // tEqu is the maximum distance for two attrs to be considered equal
+          val tEqu = 0.05 * (max - min)
+          // tDif is the minimum distance for two attrs to be considered different
+          val tDif = 0.10 * (max - min)
 
-        // val dist = abs(i1.features(idx) - i2.features(idx))
+          val dist = abs(i1.features(idx) - i2.features(idx))
 
-        // if(dist <= tEqu){
-        //   0.0
-        // }else if(dist > tDif){
-        //   1.0
-        // }else{
-        //   (dist - tEqu) / (tDif - tEqu)
-        // }
-        
-        // The traditional way proposed in Kononenko, I. (1994)
-        if (abs(max - min) < 1e-6) {
-          0 
-        } else {
-          abs(i1.features(idx) - i2.features(idx))/(max-min)
+          if(dist <= tEqu){
+            0.0
+          }else if(dist > tDif){
+            1.0
+          }else{
+            (dist - tEqu) / (tDif - tEqu)
+          }
+        } else {      
+          // The traditional way proposed in Kononenko, I. (1994)
+          if (abs(max - min) < 1e-6) {
+            0 
+          } else {
+            abs(i1.features(idx) - i2.features(idx))/(max-min)
+          }
         }
         
       // Nominal attribute
@@ -260,10 +294,6 @@ final class ReliefFSelector(override val uid: String)
     // only once. Caching the RDD negatively affects performance.
     val dataWithDistances: RDD[(LabeledPoint, Array[Double])] = 
       LPData.map { lp => ( lp, samples.map(distance(_,lp)) ) }
-    // LPData is not needed anymore TODO: Test this!!
-    // LPData.unpersist
-    
-
 
     // A BinaryHeap is used to keep the nearest neighbor per partition the
     // head of the queue is the element with more distance (the) worst

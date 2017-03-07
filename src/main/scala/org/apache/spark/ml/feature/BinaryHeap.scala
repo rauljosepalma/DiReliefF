@@ -1,4 +1,4 @@
-// TODO This class should be on this package
+// TODO This class should not be on this package
 package org.apache.spark.ml.feature
 
 // class BinaryHeap[T: reflect.ClassTag](capacity: Int)(implicit ord: math.Ordering[T]) extends java.io.Serializable {

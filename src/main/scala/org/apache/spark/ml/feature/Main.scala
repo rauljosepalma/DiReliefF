@@ -7,15 +7,25 @@ import org.apache.spark.Accumulable
 import org.apache.spark.rdd.RDD
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.sql.{DataFrame, SQLContext}
-import org.apache.spark.ml.attribute.{Attribute, AttributeGroup,NominalAttribute, NumericAttribute}
+import org.apache.spark.ml.attribute.{Attribute, AttributeGroup,NominalAttribute, NumericAttribute, AttributeType}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 
 import scala.collection.Map
 import scala.collection.mutable
+import scala.collection.mutable.StringBuilder
 import scala.collection.immutable.IndexedSeq
 import scala.util.{Failure, Success, Try}
+
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
 
 object Main {
 
@@ -245,7 +255,7 @@ object Main {
     labels: Array[String])
     (implicit sqlCtxt: SQLContext): DataFrame = {
 
-      val featsArray: Array[Attribute] = ((0 until nFeats)
+    val featsArray: Array[Attribute] = ((0 until nFeats)
       .map { a => 
         val attr = (NumericAttribute.defaultAttr
           .withName(a.toString)
@@ -269,6 +279,129 @@ object Main {
 
   }
 
+  def writeDFtoArff(df: DataFrame, fName:String)(implicit sqlCtxt: SQLContext) = {
+
+    // rdd.saveAsTextFile()
+    // (df.coalesce(1).write
+    //   .format("com.databricks.spark.csv").save(fName + ".tmp"))
+
+    // Define the header
+    var header = new StringBuilder("@relation " + fName.split('/').last + "\n")
+
+    // Extract attributes from metadata (if defined)
+    val ag = AttributeGroup.fromStructField(df.schema("features"))
+    val attrs: Array[Attribute] = ag.attributes match { 
+      // Make sure attrs are ordered by index
+      case Some(attributes) => attributes
+      // If no attrs are def, consider them to be numeric
+      // case None => Array.fill(numOfFeats)(NumericAttribute.defaultAttr)
+    }
+
+    // Extract distinct class values (labels) from metadata
+    val labelAttr = Attribute.fromStructField(df.schema("label"))
+    val classes: Array[Int] = 
+      (labelAttr.attrType match {
+        case AttributeType.Nominal => 
+          // Nominal attr 'label' must contain values metadata, 
+          // labels must be numbers between 0 and numClasses - 1
+          val numClasses = 
+            labelAttr.asInstanceOf[NominalAttribute].getNumValues.get
+          Range(0, numClasses).toArray
+        // Right now, only dataframes with metadata are accepted
+        // case AttributeType.Unresolved => 
+        //   require(!labels.isEmpty, 
+        //     "If no attr metadata is defined, then labels must be sent as a param")
+        //   labels
+        case _ =>
+          throw new SparkException("Attr 'label' must be nominal")
+      })
+    val classesStr = classes.mkString(",")
+
+
+    // Create header from attributes
+    for (attr <- attrs) {
+      val attrName = attr.name.get
+      val attrValues = 
+        if(attr.attrType == AttributeType.Nominal) 
+          "{" + (attr.asInstanceOf[NominalAttribute].values.get
+                  .map{ value =>
+                    if(scala.util.Try(value.toInt).isSuccess) 
+                      value + ".0"
+                    else
+                      value
+                  }.mkString(",") + "}"
+                )
+        else
+          "real"
+      header ++= s"@attribute $attrName $attrValues\n"
+    }
+
+    header ++= s"@attribute class {$classesStr}\n"
+    header ++= "@data \n"
+
+    // Write header
+    val fstream = new FileWriter(fName + "-header", true)
+    val out = new BufferedWriter(fstream) 
+    out.write(header.toString)
+    out.close();
+
+    // Write body (csv)
+    // case class CSVRow(label:Double, features: Vector) {
+    //   override def toString() = {
+    //     features.toArray.mkString(",") + "," + label.toString
+    //   }
+    // }
+
+    // val rdd: RDD[CSVRow] = 
+    //   df.select("features", "label").map {
+    //   case Row(features: Vector, label: Double) =>
+    //     CSVRow(label, features)
+    //   }
+
+    // rdd.coalesce(1).saveAsTextFile(fName + "-body")
+
+    // // Write header and data to arff file
+    // // Hadoop Config is accessible from SparkContext
+    // val fs = FileSystem.get(sparkContext.hadoopConfiguration); 
+
+    // // Output file can be created from file system.
+    // val output = fs.create(new Path(filename));
+
+    // // But BufferedOutputStream must be used to output an actual text file.
+    // val os = BufferedOutputStream(output)
+
+    // os.write("Hello World".getBytes("UTF-8"))
+
+    // os.close()
+
+
+    // val fin = new File(fName + ".tmp/part-00000")
+    // val fis = new FileInputStream(fin)
+    // val in = new BufferedReader(new InputStreamReader(fis))
+ 
+    // val fstream = new FileWriter(fName + "-final", true)
+    // val out = new BufferedWriter(fstream)
+ 
+    // var aLine:String = in.readLine()
+    // out.write(header.toString)
+
+    // while (aLine != null) {
+    //   //Process each line and add output to Dest.txt file
+    //   // Remove [, " and ]
+    //   aLine = aLine.filter(!Set(']', '"', '[').contains(_))
+
+    //   out.write(aLine)
+    //   out.newLine()
+    //   aLine = in.readLine()
+    // }
+
+    // // do not forget to close the buffer reader
+    // in.close();
+    // // close buffer writer
+    // out.close();
+
+  }
+
   // Parse libsvm to csv
   // val lines = sc.textFile("/home/raul/Desktop/Datasets/Large/EPSILON/epsilon_normalized.libsvm")
   // val splitted = lines.map(_.split(" "))
@@ -280,7 +413,7 @@ object Main {
 
 
 
-  // def readCSVToDF(fLocation: String, )
+  // def readCSVToDF(fName: String, )
   //   (implicit sc: SparkContext, sqlCtxt: SQLContext): 
   //   (DataFrame, mutable.HashSet[(String, Throwable)]) = {
 
@@ -474,7 +607,7 @@ object Main {
     implicit val sqlCtxt = new org.apache.spark.sql.SQLContext(sc)
 
     // Reduce verbosity
-    sc.setLogLevel("WARN")
+    // sc.setLogLevel("WARN")
     
     val df = args(0).split('.').last match {
       case "arff" => 
@@ -501,28 +634,26 @@ object Main {
         sqlCtxt.read.parquet(args(0))
     }
 
-    // ReliefF Model
-    // args(0) Dataset full location
-    // args(1) Directory where to save results. ex.: /root/results/
-    // args(2) k (num of neighbors)
-    // args(3) m (num of samples)
-    // args(4) ContextMerit behavior true or false
+    // // ReliefF Model
+    // // args(0) Dataset full location
+    // // args(1) Directory where to save results. ex.: /root/results/
+    // // args(2) k (num of neighbors)
+    // // args(3) m (num of samples)
+    // // args(4) Use cache true or false
+    // // args(5) Use ramp function true or false
+    // // args(6) ContextMerit behavior true or false
 
     // Gets the datasets basename
     val baseName = args(0).split('_').head.split('/').last
     // Ex.: /root/ECBDL14_k10m40_feats_weights.txt
-    val basePath = args(1) + "/" + baseName + "_k" + args(2) + "m" + args(3)
-
-    // val model = 
-    //   new ReliefFSelector(
-    //     args(2).toInt, args(3).toInt, 
-    //     args(4).toBoolean, basePath).fit(df)
-    // model.saveFeats(basePath)
+    val basePath = args(1) + "/" + baseName + "_k" + args(2) + "m" + args(3) + "ramp" + args(5)
 
     val model = (new ReliefFSelector()
       .setNumNeighbors(args(2).toInt)
       .setSampleSize(args(3).toInt)
-      .setContextualMerit(args(4).toBoolean)
+      .setUseCache(args(4).toBoolean)
+      .setUseRamp(args(5).toBoolean)
+      .setContextualMerit(args(6).toBoolean)
       .setFeaturesCol("features")
       .setOutputCol("selectedFeatures")
       .setLabelCol("label")
@@ -628,6 +759,17 @@ object Main {
     //    else df)
     // // Save to parquet
     // subdf.write.format("parquet").save(args(0).split('.').head + "_" + (args(1).toDouble * 100.0).toInt.toString + "perc.parquet")
+
+
+    // DataFrame to arff
+
+    // args(0) Parquet file to read from
+    // args(1) Directory where to save DataFrame
+
+    // Gets the datasets basename
+    // val baseName = args(0).split('/').last
+    // val basePath = args(1) 
+    // writeDFtoArff(df, basePath + baseName + ".arff")
 
 
     // DataFrame Merger
