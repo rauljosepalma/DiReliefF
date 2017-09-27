@@ -1,6 +1,6 @@
 name := "spark-relieff"
 
-version := "0.1.0_spark_1.6-SNAPSHOT"
+version := "0.1.0"
 
 organization := "rauljosepalma"
 
