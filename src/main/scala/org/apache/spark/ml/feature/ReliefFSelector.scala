@@ -36,16 +36,16 @@ private[feature] trait ReliefFSelectorParams extends Params
     ParamValidators.gtEq(1))
   setDefault(numNeighbors -> 10)
 
-  // TODO update default value (in two places comment and code)
   /**
    * Number of instances randomly taken from the dataset, commonly known as m.
-   * The default value of sampleSize is 70.
+   * The default value of sampleSize is 0, meaning that all the instances will 
+   * be used.
    * @group param
    */
   final val sampleSize = new IntParam(this, "sampleSize",
-    "Number of instances randomly taken from the dataset, commonly known as m.",
-    ParamValidators.gtEq(1))
-  setDefault(sampleSize -> 70)
+    "Number of instances randomly taken from the dataset, commonly known as m. ",
+    ParamValidators.gtEq(0))
+  setDefault(sampleSize -> 0)
 
   /**
    * Sets the algorithm to behave as the Contextual Merit algorithm proposed in
@@ -172,22 +172,29 @@ final class ReliefFSelector(override val uid: String)
 
     // Extract distinct class values (labels) from metadata
     val labelAttr = Attribute.fromStructField(data.schema("label"))
+    // Allow class indexes in any order, assume label is nominal
     val classes: Array[Int] = 
-      (labelAttr.attrType match {
-        case AttributeType.Nominal => 
-          // Nominal attr 'label' must contain values metadata, 
-          // labels must be numbers between 0 and numClasses - 1
-          val numClasses = 
-            labelAttr.asInstanceOf[NominalAttribute].getNumValues.get
-          Range(0, numClasses).toArray
-        // Right now, only dataframes with metadata are accepted
-        // case AttributeType.Unresolved => 
-        //   require(!labels.isEmpty, 
-        //     "If no attr metadata is defined, then labels must be sent as a param")
-        //   labels
-        case _ =>
-          throw new SparkException("Attr 'label' must be nominal")
-      })
+      labelAttr.asInstanceOf[NominalAttribute].values.get.map(_.toDouble.toInt)
+
+      // (labelAttr.attrType match {
+      //   case AttributeType.Nominal => 
+      //     // Nominal attr 'label' must contain values metadata, 
+      //     // labels must be numbers between 0 and numClasses - 1
+      //     // val numClasses = 
+      //     //   labelAttr.asInstanceOf[NominalAttribute].getNumValues.get
+      //     // Range(0, numClasses).toArray
+
+      //     // Allow class indexes in any order.
+      //     labelAttr.asInstanceOf[NominalAttribute].values.get
+
+      //   // Right now, only dataframes with metadata are accepted
+      //   // case AttributeType.Unresolved => 
+      //   //   require(!labels.isEmpty, 
+      //   //     "If no attr metadata is defined, then labels must be sent as a param")
+      //   //   labels
+      //   case _ =>
+      //     throw new SparkException("Attr 'label' must be nominal")
+      // })
 
     // Find mins and maxs for each numeric attr       
     def maxLP(lp1: LabeledPoint, lp2: LabeledPoint): LabeledPoint = {
@@ -219,7 +226,7 @@ final class ReliefFSelector(override val uid: String)
 
     // Estimated prior probabilites of each class
     val numOfInstances = LPData.count
-    val priors: Map[Int, Double]= (
+    val priors: Map[Int, Double] = (
       LPData
         .map { lp => (lp.label.toInt,1) }
         .reduceByKey { _+_ }
@@ -228,9 +235,17 @@ final class ReliefFSelector(override val uid: String)
         .toMap
     )
 
-    // Calculates the difference on an attr between two instances
-    // depending if they are numeric or nominal, using the ramp function
-    // proposed in Robnik-Šikonja, M., & Kononenko, I. (2003)
+    // DEBUG
+    println("Priors:")
+    println(priors.mkString("\n"))
+    // println("Max vals:")
+    // println(maxValues.mkString(","))
+    // println("Min vals:")
+    // println(minValues.mkString(","))
+
+    // Calculates the difference on an attr between two instances depending if
+    // they are numeric or nominal, optionally using the ramp function proposed
+    // in Robnik-Šikonja, M., & Kononenko, I. (2003)
     def diff(idx: Int, i1: LabeledPoint, i2: LabeledPoint): Double = {
       
       // Numeric attribute
@@ -257,7 +272,7 @@ final class ReliefFSelector(override val uid: String)
         } else {      
           // The traditional way proposed in Kononenko, I. (1994)
           if (abs(max - min) < 1e-6) {
-            0 
+            0.0 
           } else {
             abs(i1.features(idx) - i2.features(idx))/(max-min)
           }
@@ -285,15 +300,18 @@ final class ReliefFSelector(override val uid: String)
     //     }
     
     // Take random samples from LPData
-    val samples: Array[LabeledPoint] = 
-      LPData.takeSample(withReplacement=false, num=$(sampleSize))
-   
+    val samples = data.rdd.context.broadcast(
+      if ($(sampleSize) != 0)
+        LPData.takeSample(withReplacement=false, num=$(sampleSize))
+      else
+        LPData.collect
+    )
 
     // Find distances from all instances to the m sample instances
     // There is no need to cache dataWithDistances, because it will traversed
     // only once. Caching the RDD negatively affects performance.
     val dataWithDistances: RDD[(LabeledPoint, Array[Double])] = 
-      LPData.map { lp => ( lp, samples.map(distance(_,lp)) ) }
+      LPData.map { lp => (lp, samples.value.map(distance(_,lp))) }
 
     // A BinaryHeap is used to keep the nearest neighbor per partition the
     // head of the queue is the element with more distance (the) worst
@@ -303,11 +321,11 @@ final class ReliefFSelector(override val uid: String)
       instWithDist: (LabeledPoint, Array[Double])):
       NeighborsMatrix = {
 
-        (0 until samples.size).foreach { i =>
+        (0 until samples.value.size).foreach { i =>
           // If ContextualMerit behavior is enabled, ignore instances with same
           // class
           if(!$(contextualMerit) || 
-             instWithDist._1.label.toInt != samples(i).label.toInt) {
+             instWithDist._1.label.toInt != samples.value(i).label.toInt) {
 
             neighborsMatrix.get((instWithDist._1.label.toInt, i)) match {
               case Some(neighborsHeap) =>
@@ -320,7 +338,7 @@ final class ReliefFSelector(override val uid: String)
                 // this heap is longer it won't affect the sumsOfDiffs beacuse
                 // the contribution of the sample will be 0.
                 val capacity = 
-                  if(instWithDist._1.label.toInt == samples(i).label.toInt) $(numNeighbors) + 1 
+                  if(instWithDist._1.label.toInt == samples.value(i).label.toInt) $(numNeighbors) + 1 
                   else $(numNeighbors)
 
                 val heap = new NeighborsHeap(capacity)
@@ -339,7 +357,7 @@ final class ReliefFSelector(override val uid: String)
       NeighborsMatrix = {
 
       // Update neighborsMatrixA with neighborsMatrixB values
-      (0 until samples.size).map { i =>
+      (0 until samples.value.size).map { i =>
         classes.map { c =>
           neighborsMatrixA.get((c, i)) match {
             case Some(neighborsHeapA) =>
@@ -362,14 +380,14 @@ final class ReliefFSelector(override val uid: String)
                 case None =>
                   // If ContextualMerit behavior is enabled, do not create
                   // a NeighborsHeap for same class neighbors.
-                  if(!$(contextualMerit) || c != samples(i).label.toInt) {
+                  if(!$(contextualMerit) || c != samples.value(i).label.toInt) {
 
                     // The heap of neighbors of same class accepts one more
                     // element, to make space for the original sample. Even
                     // when this heap is longer it won't affect the sumsOfDiffs
                     // beacuse the contribution of the sample will be 0.
                     val capacity = 
-                      if(c == samples(i).label.toInt) $(numNeighbors) + 1 
+                      if(c == samples.value(i).label.toInt) $(numNeighbors) + 1 
                       else $(numNeighbors)
 
                     neighborsMatrixA((c, i)) = new NeighborsHeap(capacity)
@@ -395,10 +413,12 @@ final class ReliefFSelector(override val uid: String)
     // Check and log if not enough neighbors for each class were found
     nearestNeighbors.foreach{ case ((c, i), neighbors) => 
       val size = 
-        if (c == samples(i).label.toInt) neighbors.size - 1 else neighbors.size
+        if (c == samples.value(i).label.toInt) neighbors.size - 1 else neighbors.size
       
       if(size != $(numNeighbors)) {
-        logInfo(s"Couldn't find enough neighbors for sample in class $c, ${size}/" + $(numNeighbors).toString)
+        // DEBUG
+        logInfo(s"Couldn't find enough neighbors for sample $i in class $c, ${size}/" + $(numNeighbors).toString)
+        // println(s"Couldn't find enough neighbors for sample $i in class $c, ${size}/" + $(numNeighbors).toString)
       }
     }
 
@@ -407,30 +427,44 @@ final class ReliefFSelector(override val uid: String)
         ((c,i), (0 until numOfFeats)
                   .map { f => 
                     (neighbors
-                      .map { lp => diff(f, lp, samples(i)) }    
+                      .map { lp => diff(f, lp, samples.value(i)) }    
                       .sum
                     ) / ( 
                       // Divide by m * k 
                       // The sample isn't taken into account as a neighbor 
-                      if (c == samples(i).label.toInt) {
-                        (neighbors.size - 1) * samples.size
-                      } else {
-                        neighbors.size * samples.size
-                      }
+                      if (c == samples.value(i).label.toInt)
+                        // When there are no neighbors consider a single one
+                        // (Copied from WEKA)
+                        if (neighbors.size - 1 == 0) 
+                          1.0
+                        else
+                          (neighbors.size - 1) * samples.value.size.toDouble
+                      else
+                        neighbors.size * samples.value.size.toDouble
                     )
-                  })
+                  }
+        )
       }
+
+    // DEBUG
+    // val nanVector = 
+    //   sumsOfDiffs.map(p => (p._1, p._2.filter(_.isNaN))).filter(!_._2.isEmpty)
+    // val nanSampleIndex = nanVector.keys.head._2
+    // println("NaN Vector=")
+    // println(nanVector.mkString("\n"))
+    // println("Sample=")
+    // println(samples.value(nanSampleIndex))
 
     val weights: IndexedSeq[Double] = (
       (0 until numOfFeats).map { f => 
-        (0 until samples.size).map { i =>
+        (0 until samples.value.size).map { i =>
           classes.map { c => 
-            if (c == samples(i).label.toInt) {
+            if (c == samples.value(i).label.toInt) {
             // Its a hit
               -sumsOfDiffs(c,i)(f)
             } else {
             // Its a miss
-              (priors(c) / (1.0 - priors(samples(i).label.toInt))) * sumsOfDiffs(c,i)(f)
+              (priors(c) / (1.0 - priors(samples.value(i).label.toInt))) * sumsOfDiffs(c,i)(f)
             } 
           }.sum 
         }.sum
@@ -439,12 +473,16 @@ final class ReliefFSelector(override val uid: String)
     )
 
     // DEBUG
+    // println("weights = ")
+    // println(weights.mkString("\n"))
+
+    // DEBUG
     // This should be zero when ContextualMerit is enabled.
     val totalHitsContributions: Double = 
       (0 until numOfFeats).map { f => 
-        (0 until samples.size).map { i =>
+        (0 until samples.value.size).map { i =>
           classes.map { c =>
-            if (c == samples(i).label.toInt) {
+            if (c == samples.value(i).label.toInt) {
             // Its a hit
               sumsOfDiffs(c,i)(f)
             } else {
@@ -509,8 +547,6 @@ final class ReliefFSelectorModel private[ml] (
   /** @group setParam */
   def setOutputCol(value: String): this.type = set(outputCol, value)
 
-  /** @group setParam */
-  def setLabelCol(value: String): this.type = set(labelCol, value)
 
   override def transform(data: DataFrame): DataFrame = {
 
