@@ -174,27 +174,18 @@ final class ReliefFSelector(override val uid: String)
     val labelAttr = Attribute.fromStructField(data.schema("label"))
     // Allow class indexes in any order, assume label is nominal
     val classes: Array[Int] = 
-      labelAttr.asInstanceOf[NominalAttribute].values.get.map(_.toDouble.toInt)
+      // labelAttr.asInstanceOf[NominalAttribute].values.get.map(_.toDouble.toInt)
+      (labelAttr.attrType match {
+        case AttributeType.Nominal => 
+          // Allow class indexes in any order.
+          labelAttr.asInstanceOf[NominalAttribute].values.get.map(_.toDouble.toInt)
 
-      // (labelAttr.attrType match {
-      //   case AttributeType.Nominal => 
-      //     // Nominal attr 'label' must contain values metadata, 
-      //     // labels must be numbers between 0 and numClasses - 1
-      //     // val numClasses = 
-      //     //   labelAttr.asInstanceOf[NominalAttribute].getNumValues.get
-      //     // Range(0, numClasses).toArray
-
-      //     // Allow class indexes in any order.
-      //     labelAttr.asInstanceOf[NominalAttribute].values.get
-
-      //   // Right now, only dataframes with metadata are accepted
-      //   // case AttributeType.Unresolved => 
-      //   //   require(!labels.isEmpty, 
-      //   //     "If no attr metadata is defined, then labels must be sent as a param")
-      //   //   labels
-      //   case _ =>
-      //     throw new SparkException("Attr 'label' must be nominal")
-      // })
+        // If no metadata about labels is present, they must be inferred
+        case AttributeType.Unresolved => 
+          LPData.map(_.label.toInt).distinct.collect
+        case _ =>
+          throw new SparkException("Attr 'label' must be nominal")
+      })
 
     // Find mins and maxs for each numeric attr       
     def maxLP(lp1: LabeledPoint, lp2: LabeledPoint): LabeledPoint = {
@@ -236,8 +227,8 @@ final class ReliefFSelector(override val uid: String)
     )
 
     // DEBUG
-    println("Priors:")
-    println(priors.mkString("\n"))
+    // println("Priors:")
+    // println(priors.mkString("\n"))
     // println("Max vals:")
     // println(maxValues.mkString(","))
     // println("Min vals:")
